@@ -36,7 +36,7 @@ for _p in (UPLOADS, STORAGE):
     _p.mkdir(parents=True, exist_ok=True)
 
 # Versao exibida na cena, no titulo e no relatorio. Suba a cada alteracao pedida (ver CHANGELOG.md).
-VERSAO = "5.2"
+VERSAO = "5.3"
 
 MAX_BYTES = 25 * 1024 * 1024
 SID_RE = re.compile(r"^[0-9a-f]{12}$")
@@ -53,21 +53,52 @@ async def sem_cache(request, call_next):
     return resp
 
 
-# ---------------------------------------------------------------- v5.2: modo demonstracao (TRIBUNAL_DEMO=1)
+# ---------------------------------------------------------------- v5.2/5.3: modo demonstracao (TRIBUNAL_DEMO=1)
 DEMO = demo.Demo(STORAGE) if demo.ATIVO else None
+if DEMO:
+    ia.AO_USAR = DEMO.uso_ia
+
+
+def _recusa(api: bool, codigo: int, titulo: str, texto: str, apagar_cookie: bool = False):
+    resp = JSONResponse({"detail": texto}, codigo) if api else HTMLResponse(demo.pagina_aviso(titulo, texto), codigo)
+    if apagar_cookie:
+        resp.delete_cookie(demo.COOKIE)
+    return resp
 
 
 @app.middleware("http")
 async def guarda_demo(request, call_next):
-    """Senha, testador por cookie, rotas de administracao bloqueadas e limite diario. Sem TRIBUNAL_DEMO, nada muda."""
-    if not DEMO or DEMO.livre(request.url.path):
-        return await call_next(request)
+    """Senha, testador por cookie, IP bloqueado, testador derrubado, sala cheia, rotas de administracao e limite
+    diario. O painel /admin so abre no proprio computador. Sem TRIBUNAL_DEMO, nada muda."""
     caminho, metodo = request.url.path, request.method
+    if not DEMO:
+        return await call_next(request)
+    if caminho == "/admin" or caminho.startswith("/admin/"):
+        if not demo.local(request):
+            return _recusa(caminho.startswith("/admin/api"), 403, "Acesso negado", "O painel do administrador só abre no computador que hospeda a demonstração.")
+        return await call_next(request)
+    api = caminho.startswith("/api/")
+    ip = demo.ip_do(request)
+    if DEMO.ip_bloqueado(ip):
+        return _recusa(api, 403, "Acesso bloqueado", "O acesso deste endereço à demonstração foi bloqueado pelo administrador.")
+    if DEMO.livre(caminho):
+        return await call_next(request)
     vid = DEMO.visitante(request.cookies.get(demo.COOKIE))
     if not vid:
         if caminho == "/":
             return HTMLResponse(demo.pagina_login())
         return JSONResponse({"detail": "Acesso de demonstração expirado: recarregue a página e entre com a senha."}, 401)
+    if DEMO.derrubado(vid):
+        if caminho == "/":
+            resp = HTMLResponse(demo.pagina_login("Sua sessão foi encerrada pelo administrador. Entre de novo se tiver autorização."))
+            resp.delete_cookie(demo.COOKIE)
+            return resp
+        return _recusa(True, 401, "", "Sessão encerrada pelo administrador: recarregue a página.", True)
+    if DEMO.sala_cheia(vid):
+        DEMO.contar(vid, "recusas")
+        return _recusa(api, 503, "Sala cheia", "A demonstração está com o número máximo de testadores ao mesmo tempo (%d). "
+                       "Tente de novo em alguns minutos." % DEMO.config["max_usuarios"])
+    DEMO.tocar(vid, ip, request.headers.get("user-agent") or "", caminho)
     if DEMO.bloqueada(metodo, caminho):
         return JSONResponse({"detail": "Indisponível no ambiente de demonstração."}, 403)
     tipo = DEMO.contavel(metodo, caminho)
@@ -75,7 +106,7 @@ async def guarda_demo(request, call_next):
         ok, _ = DEMO.consumir(vid, tipo)
         if not ok:
             return JSONResponse({"detail": "Limite diário da demonstração atingido (%s). Volte amanhã." % (
-                "%d análises" % demo.LIMITE_DIA if tipo == "analises" else "%d mensagens do chat" % demo.LIMITE_CHAT)}, 429)
+                "%d análises" % DEMO.config["limite_dia"] if tipo == "analises" else "%d mensagens do chat" % DEMO.config["limite_chat"])}, 429)
     token = demo.VISITANTE.set(vid)
     try:
         resp = await call_next(request)
@@ -95,9 +126,16 @@ def login_pagina():
 def login(request: Request, senha: str = Form("")):
     if not DEMO:
         return RedirectResponse("/", 303)
+    ip = demo.ip_do(request)
     if not DEMO.senha_ok(senha):
+        DEMO.evento("senha", "Tentativa com senha incorreta", ip=ip)
         return HTMLResponse(demo.pagina_login("Senha incorreta."), 401)
     vid = DEMO.visitante(request.cookies.get(demo.COOKIE)) or demo.novo_visitante()
+    if DEMO.sala_cheia(vid):
+        DEMO.evento("cheia", "Entrada recusada: sala cheia", vid, ip)
+        return HTMLResponse(demo.pagina_login("A demonstração está com o máximo de %d testadores ao mesmo tempo. Tente de novo em "
+                                              "alguns minutos." % DEMO.config["max_usuarios"]), 503)
+    DEMO.registrar_login(vid, ip, request.headers.get("user-agent") or "")
     resp = RedirectResponse("/", 303)
     https = request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https"
     resp.set_cookie(demo.COOKIE, DEMO.assinar(vid), max_age=30 * 86400, httponly=True, samesite="lax", secure=https)
@@ -163,8 +201,47 @@ def nova_sessao():
     dados = {"id": sid, "criada_em": _agora(), "reu": None, "autor": None, "analise": None}
     if DEMO:
         dados["dono"] = demo.VISITANTE.get()
+        DEMO.contar(dados["dono"], "sessoes")
     gravar(sid, dados)
     return {"id": sid}
+
+
+# ---------------------------------------------------------------- v5.3: painel do administrador (so local)
+@app.get("/admin")
+def admin_pagina():
+    if not DEMO:
+        raise HTTPException(404, "O painel existe só no modo demonstração")
+    return FileResponse(BASE / "static" / "admin.html")
+
+
+@app.get("/admin/api/estado")
+def admin_estado():
+    link = BASE / "link_demo.txt"  # gravado pelo iniciar_demo.ps1 quando o tunel abre
+    return {**DEMO.estado(), "link": link.read_text(encoding="utf-8").strip() if link.exists() else ""}
+
+
+@app.post("/admin/api/acao")
+def admin_acao(body: dict = Body(default={})):
+    acao, vid, ip = str(body.get("acao") or ""), str(body.get("vid") or ""), str(body.get("ip") or "")
+    if acao == "derrubar":
+        ok = DEMO.derrubar(vid)
+    elif acao == "bloquear":
+        ok = DEMO.bloquear_ip(ip, str(body.get("motivo") or ""))
+    elif acao == "permitir":
+        ok = DEMO.permitir(ip, vid)
+    elif acao == "limites":
+        return {"ok": True, "config": DEMO.ajustar(body.get("config") or {})}
+    else:
+        raise HTTPException(400, "Ação desconhecida")
+    if not ok:
+        raise HTTPException(404, "Usuário ou IP não encontrado")
+    return {"ok": True}
+
+
+@app.get("/api/demo/ping")
+def demo_ping():
+    """Batimento da página aberta: mantém o testador como online no painel."""
+    return {"ok": True, **(DEMO.restantes(demo.VISITANTE.get()) if DEMO else {})}
 
 
 @app.get("/api/sessao/{sid}")
@@ -804,6 +881,59 @@ def avaliar_peca(sid: str, body: dict = Body(default={})):
         raise HTTPException(502, "IA indisponivel: %s" % exc) from exc
 
 
+# ---------------------------------------------------------------- v5.3: papel da peca (branco, escritorio ou proprio)
+def _timbrado_proprio(sid: str) -> Path:
+    return UPLOADS / ("%s_timbrado.docx" % sid)
+
+
+def _papel(sid: str, dados: dict) -> dict:
+    escritorio = peca.TIMBRADO.exists() and not DEMO
+    modo = dados.get("papel") or ("escritorio" if escritorio else "branco")
+    if modo == "proprio" and not _timbrado_proprio(sid).exists():
+        modo = "branco"
+    if modo == "escritorio" and not escritorio:
+        modo = "branco"
+    return {"modo": modo, "nome": dados.get("papel_nome") or "", "escritorio": escritorio}
+
+
+def _timbrado_do(sid: str):
+    p = _papel(sid, carregar(sid))
+    return {"escritorio": "padrao", "proprio": _timbrado_proprio(sid)}.get(p["modo"])
+
+
+@app.get("/api/sessao/{sid}/papel")
+def ver_papel(sid: str):
+    return _papel(sid, carregar(sid))
+
+
+@app.post("/api/sessao/{sid}/papel")
+async def definir_papel(sid: str, modo: str = Form("branco"), file: UploadFile | None = File(None)):
+    """Folha em branco (como uma pagina do Word), timbrado do escritorio ou o timbrado .docx enviado pelo usuario."""
+    dados = carregar(sid)
+    if modo not in ("branco", "escritorio", "proprio"):
+        raise HTTPException(400, "Papel inválido")
+    if modo == "proprio":
+        if file is not None:
+            conteudo = await file.read()
+            if len(conteudo) > 10 * 1024 * 1024:
+                raise HTTPException(413, "Timbrado acima de 10 MB")
+            if not conteudo.startswith(b"PK"):
+                raise HTTPException(400, "Envie o timbrado em .docx (Word)")
+            try:
+                import docx as _docx
+                import io
+                _docx.Document(io.BytesIO(conteudo))
+            except Exception as exc:  # noqa: BLE001
+                raise HTTPException(422, "Não consegui ler o .docx: %s" % exc) from exc
+            _timbrado_proprio(sid).write_bytes(conteudo)
+            dados["papel_nome"] = (file.filename or "timbrado.docx")[:120]
+        elif not _timbrado_proprio(sid).exists():
+            raise HTTPException(400, "Envie o arquivo .docx do seu timbrado")
+    dados["papel"] = modo
+    gravar(sid, dados)
+    return _papel(sid, dados)
+
+
 @app.post("/api/sessao/{sid}/peca/exportar")
 def exportar_peca(sid: str, body: dict = Body(default={})):
     carregar(sid)
@@ -812,7 +942,7 @@ def exportar_peca(sid: str, body: dict = Body(default={})):
     pasta = Path(tempfile.mkdtemp(prefix="peca_"))
     arq = pasta / (nome + ".docx")
     peca.gerar_docx(str(body.get("html") or ""), arq, str(body.get("fonte") or "Times New Roman"),
-                    float(body.get("tamanho") or 12), float(body.get("entrelinha") or 1.5))
+                    float(body.get("tamanho") or 12), float(body.get("entrelinha") or 1.5), _timbrado_do(sid))
     if formato == "pdf":
         try:
             arq = peca.docx_para_pdf(arq, pasta / (nome + ".pdf"))

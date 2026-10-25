@@ -86,6 +86,42 @@
   $$(".aba").forEach(b => b.addEventListener("click", () => mostrarAba(b.dataset.aba)));
 
   /* ------------------------------------------------------------ abrir / carregar */
+  // v5.3: papel da peça (folha em branco, timbrado do escritório ou o timbrado .docx enviado)
+  async function carregarPapel() {
+    if (!state.sid) return;
+    try {
+      const p = await api(`/api/sessao/${state.sid}/papel`);
+      aplicarPapel(p);
+    } catch { /* sem sessão */ }
+  }
+  function aplicarPapel(p) {
+    const sel = $("#pcPapel");
+    sel.querySelector('option[value="escritorio"]').hidden = !p.escritorio;
+    sel.querySelector('option[value="proprio"]').textContent = p.modo === "proprio" && p.nome ? `Meu timbrado: ${p.nome}` : "Meu timbrado (.docx)…";
+    sel.value = p.modo;
+    $("#aba-peca").dataset.papel = p.modo;
+    sel.title = p.modo === "proprio" ? `Timbrado ${p.nome}: aplicado no .docx exportado (na tela a folha fica em branco)` : sel.options[sel.selectedIndex].text;
+  }
+  async function definirPapel(modo, arquivo) {
+    const fd = new FormData();
+    fd.append("modo", modo);
+    if (arquivo) fd.append("file", arquivo);
+    try {
+      aplicarPapel(await api(`/api/sessao/${state.sid}/papel`, { method: "POST", body: fd }));
+      paginar();
+    } catch (e) { alert("Não consegui trocar o papel: " + e.message); carregarPapel(); }
+  }
+  $("#pcPapel").addEventListener("change", (e) => {
+    if (!state.sid) return;
+    if (e.target.value === "proprio") $("#pcPapelArq").click();
+    else definirPapel(e.target.value);
+  });
+  $("#pcPapelArq").addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    e.target.value = "";
+    if (f) definirPapel("proprio", f); else carregarPapel();
+  });
+
   async function abrir(recriar) {
     if (!state.sid || !state[state.atuante]) {
       P.aberta = false;
@@ -97,6 +133,7 @@
     P.parte = state.atuante;
     $("#pcOrigem").textContent = "Abrindo a peça…";
     try {
+      carregarPapel();
       const d = await api(`/api/sessao/${state.sid}/peca?parte=${P.parte}${recriar ? "&recriar=true" : ""}${qTipo()}`);
       P.sid = state.sid; P.aberta = true; P.versoes = d.versoes || []; P.avaliacao = null;
       carregarHtml(d.html);

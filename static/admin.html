@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel da Demo · Tribunal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#07080C; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06); --line:rgba(255,255,255,.09); --ink:#F4F1EA; --sub:#B4B0C2; --mute:#8A8699;
+  --latao:#F2C46D; --latao2:#F7D79A; --violeta:#9B8CFF; --ok:#3EE0A1; --warn:#FFC24B; --bad:#FF6F6F; --info:#6CB6FF;
+  --ok-f:rgba(62,224,161,.12); --warn-f:rgba(255,194,75,.12); --bad-f:rgba(255,111,111,.12); --info-f:rgba(108,182,255,.12);
+  --grad:linear-gradient(135deg,#F7D79A 0%,#F2C46D 35%,#E8935A 70%,#9B8CFF 100%);
+  --r:14px; --s1:8px; --s2:12px; --s3:16px; --s4:24px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(1100px 600px at 8% -10%,rgba(155,140,255,.18),transparent 60%),radial-gradient(900px 500px at 100% 0%,rgba(242,196,109,.12),transparent 55%),radial-gradient(800px 600px at 50% 120%,rgba(62,224,161,.07),transparent 60%),var(--bg);background-attachment:fixed;min-height:100vh;color:var(--ink);font-family:"Fira Sans",system-ui,sans-serif;font-size:15px;line-height:1.5}
+.num,code,.mono{font-family:"Fira Code",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--latao2)}
+.wrap{max-width:1360px;margin:0 auto;padding:var(--s3)}
+header.top{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;justify-content:space-between;padding:var(--s3) 0 var(--s2);border-bottom:1px solid var(--line)}
+.marca{display:flex;flex-direction:column}
+.marca small{color:var(--latao);letter-spacing:3px;font-size:11.5px;font-weight:600;text-transform:uppercase}
+.marca h1{margin:0;font-size:22px;font-weight:700}
+.ctrl{display:flex;flex-wrap:wrap;gap:var(--s1);align-items:center}
+.vivo{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--sub);padding:6px 10px;border:1px solid var(--line);border-radius:999px;min-height:36px}
+.vivo i{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(76,195,138,.6);animation:pulso 2s infinite}
+.vivo.pausa i{background:var(--warn);animation:none}.vivo.velho i{background:var(--bad);animation:none}
+@keyframes pulso{70%{box-shadow:0 0 0 8px rgba(76,195,138,0)}100%{box-shadow:0 0 0 0 rgba(76,195,138,0)}}
+@media (prefers-reduced-motion: reduce){.vivo i{animation:none}*{transition:none!important}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);
+  background:var(--card2);color:var(--ink);font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--latao)}.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--latao2);outline-offset:2px}
+.btn svg{width:16px;height:16px}
+.btn.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}.btn.bad:hover{background:var(--bad-f)}
+.btn.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}.btn.warn:hover{background:var(--warn-f)}
+.btn.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}.btn.ok:hover{background:var(--ok-f)}
+.btn.prim{background:var(--latao);color:#1A1209;border-color:var(--latao);font-weight:700}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.link{font-size:13px;color:var(--sub);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:var(--s2)}
+.link code{background:var(--card2);border:1px solid var(--line);padding:3px 8px;border-radius:6px;color:var(--ink);word-break:break-all}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--s2);margin:var(--s3) 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s2) var(--s3);min-height:104px;display:flex;flex-direction:column;gap:2px}
+.kpi .rot{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--sub);font-weight:600}
+.kpi .val{font-size:30px;font-weight:600;line-height:1.15}.kpi .val small{font-size:15px;color:var(--sub);font-weight:500}
+.kpi .det{font-size:12.5px;color:var(--mute)}
+.barra{height:6px;border-radius:3px;background:var(--card2);overflow:hidden;margin-top:6px}.barra b{display:block;height:100%;background:var(--ok);transition:width .4s}
+.barra b.cheio{background:var(--bad)}.barra b.quase{background:var(--warn)}
+.grade{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--s3)}
+@media (max-width:1100px){.grade{grid-template-columns:minmax(0,1fr)}}
+.painel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s3);min-width:0}
+.painel h2{margin:0 0 var(--s2);font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.painel h2 .cont{font-family:"Fira Code",monospace;font-size:12.5px;color:var(--sub);font-weight:500}
+.filtros{display:flex;flex-wrap:wrap;gap:var(--s1);align-items:center;margin-bottom:var(--s2)}
+.filtros input{flex:1 1 220px;min-height:38px;padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:inherit;font-size:14px}
+.chip{min-height:34px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--sub);font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--latao);color:var(--ink);background:var(--card2)}
+.tabwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:960px}
+th{position:sticky;top:0;background:var(--card2);text-align:left;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);font-weight:600;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}tbody tr:hover td{background:color-mix(in srgb,var(--card2) 60%,transparent)}
+td.n{text-align:right;white-space:nowrap}th.n{text-align:right}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.st svg{width:12px;height:12px}
+.st.online{color:var(--ok);background:var(--ok-f)}.st.inativo{color:var(--sub);background:var(--card2)}
+.st.derrubado{color:var(--warn);background:var(--warn-f)}.st.bloqueado{color:var(--bad);background:var(--bad-f)}
+.sub{color:var(--mute);font-size:12px}
+.acoes{display:flex;gap:6px;flex-wrap:wrap;min-width:230px}
+.vazio{padding:var(--s4);text-align:center;color:var(--sub)}
+.lista{list-style:none;margin:0;padding:0;display:grid;gap:var(--s1)}
+.lista li{display:flex;justify-content:space-between;gap:var(--s1);align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card2)}
+.ev{font-size:13px;display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.ev:last-child{border-bottom:0}.ev .h{font-family:"Fira Code",monospace;color:var(--mute);font-size:12px}
+.ev .t b{font-weight:600}.ev.bloqueado .t b,.ev.senha .t b{color:var(--bad)}.ev.derrubado .t b,.ev.cheia .t b{color:var(--warn)}.ev.login .t b{color:var(--ok)}
+.eventos{max-height:420px;overflow:auto;padding-right:4px}
+form.lim{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+form.lim label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--sub)}
+form.lim input{min-height:40px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:inherit;font-family:"Fira Code",monospace}
+form.lim .btn{grid-column:1/-1}
+.col{display:grid;gap:var(--s3);align-content:start}
+dialog{border:1px solid var(--latao);border-radius:var(--r);background:var(--card);color:var(--ink);padding:var(--s4);max-width:440px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h3{margin:0 0 6px;font-size:18px}dialog p{color:var(--sub);margin:0 0 var(--s2)}
+dialog label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--sub)}
+dialog input{min-height:40px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:inherit}
+dialog .bts{display:flex;justify-content:flex-end;gap:var(--s1);margin-top:var(--s3)}
+.toast{position:fixed;right:16px;bottom:16px;z-index:9;display:grid;gap:8px}
+.toast div{background:var(--card2);border:1px solid var(--line);border-left:4px solid var(--ok);padding:10px 14px;border-radius:8px;font-size:14px;max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.toast div.erro{border-left-color:var(--bad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){.marca h1{font-size:19px}.kpi .val{font-size:26px}form.lim{grid-template-columns:1fr}}
+
+/* premium dark */
+.marca small{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.marca h1{font-size:24px;letter-spacing:.2px}
+.kpi,.painel{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 18px 40px -18px rgba(0,0,0,.7)}
+.kpi{position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--grad);opacity:.85}
+.kpi .val{background:linear-gradient(180deg,#FFFFFF,#CFC8E6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kpi .val small{-webkit-text-fill-color:var(--sub)}
+.barra b{background:linear-gradient(90deg,var(--ok),#7BF0C6)}.barra b.quase{background:linear-gradient(90deg,var(--warn),#FFD98A)}.barra b.cheio{background:linear-gradient(90deg,var(--bad),#FF9C9C)}
+.btn{background:rgba(255,255,255,.05)}
+.btn.prim{background:var(--grad);color:#15110B;border:0;box-shadow:0 8px 24px -10px rgba(242,196,109,.7)}
+.btn.prim:hover{filter:brightness(1.07)}
+th{background:rgba(20,20,30,.95)}
+.tabwrap{border-color:var(--line);background:rgba(0,0,0,.18)}
+.painel h2{font-size:15px;letter-spacing:.3px}
+.painel h2::before{content:"";width:6px;height:16px;border-radius:3px;background:var(--grad)}
+.chip[aria-pressed="true"]{background:linear-gradient(#11121A,#11121A) padding-box,var(--grad) border-box;border:1px solid transparent;color:var(--ink)}
+.vivo{background:rgba(255,255,255,.04)}
+dialog{background:#11121A;border:1px solid rgba(242,196,109,.45);box-shadow:0 30px 80px -20px rgba(0,0,0,.9)}
+.toast div{background:#151622}
+.link code{background:rgba(255,255,255,.05)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="marca"><small>Tribunal de Análise Jurídica</small><h1>Painel da demonstração</h1></div>
+    <div class="ctrl">
+      <span id="vivo" class="vivo" role="status" aria-live="polite"><i aria-hidden="true"></i><span id="vivoTxt">conectando…</span></span>
+      <button id="btnPausa" class="btn" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+        <span>Pausar</span></button>
+      <button id="btnAtualizar" class="btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+        <span>Atualizar</span></button>
+    </div>
+  </header>
+  <div class="link" id="linkBox" hidden><span>Link público para os testadores:</span><code id="linkTxt"></code>
+    <button class="btn" type="button" id="btnCopiar">Copiar link</button></div>
+
+  <section class="kpis" aria-label="Indicadores">
+    <div class="kpi"><span class="rot">Online agora</span><span class="val num" id="kOnline">—</span><div class="barra"><b id="kOnlineBar" style="width:0"></b></div><span class="det" id="kOnlineDet">máximo simultâneo</span></div>
+    <div class="kpi"><span class="rot">Testadores</span><span class="val num" id="kTotal">—</span><span class="det">já entraram na demonstração</span></div>
+    <div class="kpi"><span class="rot">Análises hoje</span><span class="val num" id="kAnalises">—</span><span class="det" id="kAnalisesDet">limite por testador</span></div>
+    <div class="kpi"><span class="rot">Mensagens hoje</span><span class="val num" id="kChat">—</span><span class="det" id="kChatDet">chat / copiloto</span></div>
+    <div class="kpi"><span class="rot">Chamadas de IA</span><span class="val num" id="kIA">—</span><span class="det" id="kIADet">falhas: —</span></div>
+    <div class="kpi"><span class="rot">Tokens de IA</span><span class="val num" id="kTok">—</span><span class="det" id="kTokDet">entrada · saída</span></div>
+  </section>
+
+  <div class="grade">
+    <section class="painel" aria-labelledby="hUsuarios">
+      <h2 id="hUsuarios">Testadores <span class="cont" id="contUsuarios"></span></h2>
+      <div class="filtros">
+        <label class="sr" for="busca">Buscar por IP, testador ou navegador</label>
+        <input id="busca" type="search" placeholder="Buscar por IP, testador ou navegador" autocomplete="off">
+        <div role="group" aria-label="Filtrar por situação" id="chips">
+          <button class="chip" type="button" data-f="todos" aria-pressed="true">Todos</button>
+          <button class="chip" type="button" data-f="online" aria-pressed="false">Online</button>
+          <button class="chip" type="button" data-f="inativo" aria-pressed="false">Inativos</button>
+          <button class="chip" type="button" data-f="derrubado" aria-pressed="false">Derrubados</button>
+          <button class="chip" type="button" data-f="bloqueado" aria-pressed="false">Bloqueados</button>
+        </div>
+      </div>
+      <div class="tabwrap">
+        <table>
+          <thead><tr><th>Situação</th><th>Testador / IP</th><th>Navegador</th><th>Último acesso</th><th class="n">Sessões</th>
+            <th class="n">Análises<br><span class="sub">hoje · total</span></th><th class="n">Chat<br><span class="sub">hoje · total</span></th>
+            <th class="n">IA<br><span class="sub">chamadas</span></th><th class="n">Tokens<br><span class="sub">entrada · saída</span></th><th class="n">Tempo IA</th><th>Ações</th></tr></thead>
+          <tbody id="tbUsuarios"><tr><td colspan="11" class="vazio">Carregando…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="col">
+      <section class="painel" aria-labelledby="hLim">
+        <h2 id="hLim">Limites</h2>
+        <form class="lim" id="formLim">
+          <label>Testadores ao mesmo tempo<input type="number" name="max_usuarios" min="1" max="50" required></label>
+          <label>Minutos para contar como online<input type="number" name="janela_online_min" min="1" max="60" required></label>
+          <label>Análises por testador/dia<input type="number" name="limite_dia" min="0" max="100" required></label>
+          <label>Mensagens de chat/dia<input type="number" name="limite_chat" min="0" max="500" required></label>
+          <button class="btn prim" type="submit">Salvar limites</button>
+        </form>
+      </section>
+      <section class="painel" aria-labelledby="hBloq">
+        <h2 id="hBloq">IPs bloqueados <span class="cont" id="contBloq"></span></h2>
+        <ul class="lista" id="lsBloq"></ul>
+        <form id="formBloq" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <label class="sr" for="ipManual">Bloquear um IP</label>
+          <input id="ipManual" placeholder="Bloquear um IP manualmente" style="flex:1 1 160px;min-height:38px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:inherit">
+          <button class="btn bad" type="submit">Bloquear</button>
+        </form>
+      </section>
+      <section class="painel" aria-labelledby="hEv">
+        <h2 id="hEv">Eventos</h2>
+        <div class="eventos" id="lsEv"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog">
+    <h3 id="dlgTit"></h3><p id="dlgTxt"></p>
+    <label id="dlgMotivoBox" hidden>Motivo (opcional)<input id="dlgMotivo" maxlength="200"></label>
+    <div class="bts"><button class="btn" value="nao" type="submit">Cancelar</button><button class="btn bad" value="sim" id="dlgOk" type="submit">Confirmar</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = (n) => Number(n || 0).toLocaleString("pt-BR");
+  const curto = (n) => { n = Number(n || 0); return n >= 1e6 ? (n / 1e6).toFixed(1).replace(".", ",") + " mi" : n >= 1e3 ? (n / 1e3).toFixed(1).replace(".", ",") + " mil" : String(n); };
+  const tempo = (s) => { s = Math.round(s || 0); return s < 60 ? s + " s" : s < 3600 ? Math.floor(s / 60) + " min " + (s % 60) + " s" : Math.floor(s / 3600) + " h " + Math.floor(s % 3600 / 60) + " min"; };
+  const ha = (s) => s < 60 ? "agora" : s < 3600 ? `há ${Math.floor(s / 60)} min` : s < 86400 ? `há ${Math.floor(s / 3600)} h` : `há ${Math.floor(s / 86400)} d`;
+  const navegador = (ua) => {
+    ua = ua || ""; const so = /Android/i.test(ua) ? "Android" : /iPhone|iPad/i.test(ua) ? "iOS" : /Windows/i.test(ua) ? "Windows" : /Mac OS/i.test(ua) ? "macOS" : /Linux/i.test(ua) ? "Linux" : "—";
+    const nav = /Edg\//.test(ua) ? "Edge" : /OPR\//.test(ua) ? "Opera" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "outro";
+    return `${nav} · ${so}`;
+  };
+  const ICON = {
+    online: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>',
+    inativo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>',
+    derrubado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 12h12"/></svg>',
+    bloqueado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/></svg>'
+  };
+  const ROT = { online: "Online", inativo: "Inativo", derrubado: "Derrubado", bloqueado: "Bloqueado" };
+  const S = { dados: null, filtro: "todos", busca: "", pausado: false, ultimoOk: 0, timer: null, editandoLim: false };
+
+  function toast(txt, erro) {
+    const d = document.createElement("div"); if (erro) d.className = "erro"; d.textContent = txt;
+    $("#toast").appendChild(d); setTimeout(() => d.remove(), 4000);
+  }
+  function confirmar(titulo, texto, comMotivo) {
+    return new Promise((ok) => {
+      $("#dlgTit").textContent = titulo; $("#dlgTxt").textContent = texto;
+      $("#dlgMotivoBox").hidden = !comMotivo; $("#dlgMotivo").value = "";
+      const d = $("#dlg");
+      d.onclose = () => ok(d.returnValue === "sim" ? { motivo: $("#dlgMotivo").value } : null);
+      d.showModal();
+    });
+  }
+  async function acao(corpo, sucesso) {
+    try {
+      const r = await fetch("/admin/api/acao", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.detail || `HTTP ${r.status}`);
+      toast(sucesso); carregar();
+      return j;
+    } catch (e) { toast("Falhou: " + e.message, true); }
+  }
+
+  function renderKpis(d) {
+    const max = d.config.max_usuarios, pct = Math.min(100, 100 * d.online / Math.max(1, max));
+    $("#kOnline").innerHTML = `${d.online}<small> / ${max}</small>`;
+    const bar = $("#kOnlineBar"); bar.style.width = pct + "%"; bar.className = d.online >= max ? "cheio" : d.online >= max - 1 ? "quase" : "";
+    $("#kOnlineDet").textContent = d.online >= max ? "sala cheia: novas entradas recusadas" : `online = ativo nos últimos ${d.config.janela_online_min} min`;
+    $("#kTotal").textContent = fmt(d.total);
+    $("#kAnalises").textContent = fmt(d.analises_hoje); $("#kAnalisesDet").textContent = `limite: ${d.config.limite_dia} por testador/dia`;
+    $("#kChat").textContent = fmt(d.chat_hoje); $("#kChatDet").textContent = `limite: ${d.config.limite_chat} por testador/dia`;
+    $("#kIA").textContent = fmt(d.ia.chamadas); $("#kIADet").textContent = `falhas: ${fmt(d.ia.falhas)} · tempo: ${tempo(d.ia.segundos)}`;
+    $("#kTok").textContent = curto(d.ia.tokens_entrada + d.ia.tokens_saida);
+    $("#kTokDet").textContent = `${curto(d.ia.tokens_entrada)} entrada · ${curto(d.ia.tokens_saida)} saída`;
+  }
+
+  function renderUsuarios(d) {
+    const q = S.busca.toLowerCase();
+    const us = d.usuarios.filter(u => (S.filtro === "todos" || u.status === S.filtro)
+      && (!q || [u.vid, u.ip, ...(u.ips || []), u.navegador].join(" ").toLowerCase().includes(q)));
+    $("#contUsuarios").textContent = `${us.length} de ${d.usuarios.length}`;
+    if (!us.length) { $("#tbUsuarios").innerHTML = `<tr><td colspan="11" class="vazio">${d.usuarios.length ? "Nenhum testador neste filtro." : "Ninguém entrou na demonstração ainda. Envie o link e a senha aos testadores."}</td></tr>`; return; }
+    $("#tbUsuarios").innerHTML = us.map(u => {
+      const outros = (u.ips || []).filter(x => x !== u.ip);
+      const bloq = u.status === "bloqueado", derr = u.status === "derrubado";
+      return `<tr>
+        <td><span class="st ${u.status}">${ICON[u.status]}${ROT[u.status]}</span></td>
+        <td><span class="mono">${esc(u.ip || "—")}</span>${outros.length ? `<div class="sub" title="${esc(outros.join(", "))}">+${outros.length} IP(s) anterior(es)</div>` : ""}<div class="sub mono">#${esc(u.vid.slice(0, 8))} · ${u.logins} login(s)</div></td>
+        <td title="${esc(u.navegador)}">${esc(navegador(u.navegador))}<div class="sub">${esc((u.ultima_rota || "").slice(0, 34))}</div></td>
+        <td>${esc(ha(u.inativo_seg))}<div class="sub mono">${esc((u.ultimo || "").replace("T", " ").slice(5, 16))}</div></td>
+        <td class="n num">${fmt(u.sessoes)}</td>
+        <td class="n num">${u.hoje.analises} · ${fmt(u.analises)}</td>
+        <td class="n num">${u.hoje.chat} · ${fmt(u.chat)}</td>
+        <td class="n num">${fmt(u.ia.chamadas)}${u.ia.falhas ? `<div class="sub">${u.ia.falhas} falha(s)</div>` : ""}</td>
+        <td class="n num">${curto(u.ia.tokens_entrada)} · ${curto(u.ia.tokens_saida)}</td>
+        <td class="n num">${tempo(u.ia.segundos)}</td>
+        <td><div class="acoes">
+          ${!bloq && !derr ? `<button class="btn warn" type="button" data-a="derrubar" data-vid="${esc(u.vid)}" data-ip="${esc(u.ip)}" aria-label="Derrubar o testador ${esc(u.ip)}">Derrubar</button>` : ""}
+          ${!bloq ? `<button class="btn bad" type="button" data-a="bloquear" data-vid="${esc(u.vid)}" data-ip="${esc(u.ip)}" aria-label="Bloquear o IP ${esc(u.ip)}">Bloquear IP</button>` : ""}
+          ${bloq || derr ? `<button class="btn ok" type="button" data-a="permitir" data-vid="${esc(u.vid)}" data-ip="${esc(bloq ? (u.ips || []).find(x => d.bloqueios.some(b => b.ip === x)) || u.ip : "")}" aria-label="Permitir o testador ${esc(u.ip)}">Permitir</button>` : ""}
+        </div></td></tr>`;
+    }).join("");
+  }
+
+  function renderLaterais(d) {
+    $("#contBloq").textContent = d.bloqueios.length ? `(${d.bloqueios.length})` : "";
+    $("#lsBloq").innerHTML = d.bloqueios.length ? d.bloqueios.map(b => `<li><div><span class="mono">${esc(b.ip)}</span><div class="sub">desde ${esc((b.desde || "").replace("T", " ").slice(0, 16))}${b.motivo ? " · " + esc(b.motivo) : ""}</div></div>
+      <button class="btn ok" type="button" data-a="permitir" data-ip="${esc(b.ip)}" aria-label="Desbloquear ${esc(b.ip)}">Permitir</button></li>`).join("")
+      : `<li class="sub" style="justify-content:center">Nenhum IP bloqueado.</li>`;
+    $("#lsEv").innerHTML = d.eventos.length ? d.eventos.map(e => `<div class="ev ${esc(e.tipo)}"><span class="h">${esc((e.quando || "").slice(11, 16))}</span>
+      <span class="t"><b>${esc(e.texto)}</b>${e.ip ? ` · <span class="mono">${esc(e.ip)}</span>` : ""}${e.vid ? ` <span class="sub mono">#${esc(e.vid.slice(0, 8))}</span>` : ""}<div class="sub">${esc((e.quando || "").slice(0, 10))}</div></span></div>`).join("")
+      : `<p class="sub">Sem eventos ainda.</p>`;
+    if (!S.editandoLim) for (const k of ["max_usuarios", "janela_online_min", "limite_dia", "limite_chat"]) $("#formLim").elements[k].value = d.config[k];
+    if (d.link) { $("#linkBox").hidden = false; $("#linkTxt").textContent = d.link; }
+  }
+
+  function vivo() {
+    const el = $("#vivo"), idade = (Date.now() - S.ultimoOk) / 1000;
+    el.classList.toggle("pausa", S.pausado); el.classList.toggle("velho", !S.pausado && S.ultimoOk && idade > 15);
+    const hora = S.ultimoOk ? new Date(S.ultimoOk).toLocaleTimeString("pt-BR") : "—";
+    $("#vivoTxt").textContent = S.pausado ? `Pausado · última atualização ${hora}` : idade > 15 ? `Sem resposta do servidor · última ${hora}` : `Ao vivo · atualizado às ${hora}`;
+  }
+
+  async function carregar() {
+    try {
+      const r = await fetch("/admin/api/estado", { cache: "no-store" });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || `HTTP ${r.status}`);
+      const d = await r.json();
+      S.dados = d; S.ultimoOk = Date.now();
+      renderKpis(d); renderUsuarios(d); renderLaterais(d);
+    } catch (e) { if (!S.ultimoOk) $("#tbUsuarios").innerHTML = `<tr><td colspan="11" class="vazio">${esc(e.message)}</td></tr>`; }
+    vivo();
+  }
+  function agendar() { clearInterval(S.timer); S.timer = setInterval(() => { if (!S.pausado && !document.hidden) carregar(); else vivo(); }, 3000); }
+
+  document.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-a]"); if (!b) return;
+    const a = b.dataset.a, vid = b.dataset.vid || "", ip = b.dataset.ip || "";
+    if (a === "derrubar") {
+      if (await confirmar("Derrubar este testador?", `A sessão de ${ip || "#" + vid.slice(0, 8)} é encerrada agora. Ele pode entrar de novo com a senha; para impedir, bloqueie o IP.`))
+        acao({ acao: "derrubar", vid }, "Testador derrubado.");
+    } else if (a === "bloquear") {
+      const r = await confirmar("Bloquear este IP?", `Todo acesso de ${ip} é recusado até você permitir de novo. Quem usa esse IP é derrubado.`, true);
+      if (r) acao({ acao: "bloquear", ip, motivo: r.motivo }, `IP ${ip} bloqueado.`);
+    } else if (a === "permitir") {
+      acao({ acao: "permitir", ip, vid }, "Acesso liberado.");
+    }
+  });
+  $("#formBloq").addEventListener("submit", async (e) => {
+    e.preventDefault(); const ip = $("#ipManual").value.trim(); if (!ip) return;
+    const r = await confirmar("Bloquear este IP?", `Todo acesso de ${ip} será recusado.`, true);
+    if (r && await acao({ acao: "bloquear", ip, motivo: r.motivo }, `IP ${ip} bloqueado.`)) $("#ipManual").value = "";
+  });
+  $("#formLim").addEventListener("focusin", () => { S.editandoLim = true; });
+  $("#formLim").addEventListener("submit", async (e) => {
+    e.preventDefault(); const f = e.target.elements;
+    const cfg = Object.fromEntries(["max_usuarios", "janela_online_min", "limite_dia", "limite_chat"].map(k => [k, Number(f[k].value)]));
+    await acao({ acao: "limites", config: cfg }, "Limites salvos: valem a partir de agora.");
+    S.editandoLim = false; document.activeElement.blur();
+  });
+  $("#busca").addEventListener("input", (e) => { S.busca = e.target.value; if (S.dados) renderUsuarios(S.dados); });
+  $("#chips").addEventListener("click", (e) => {
+    const c = e.target.closest("[data-f]"); if (!c) return;
+    S.filtro = c.dataset.f; document.querySelectorAll("#chips .chip").forEach(x => x.setAttribute("aria-pressed", String(x === c)));
+    if (S.dados) renderUsuarios(S.dados);
+  });
+  $("#btnPausa").addEventListener("click", () => {
+    S.pausado = !S.pausado; $("#btnPausa").setAttribute("aria-pressed", String(S.pausado));
+    $("#btnPausa span").textContent = S.pausado ? "Retomar" : "Pausar"; if (!S.pausado) carregar(); vivo();
+  });
+  $("#btnAtualizar").addEventListener("click", carregar);
+  $("#btnCopiar").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText($("#linkTxt").textContent); toast("Link copiado."); } catch { toast("Não consegui copiar.", true); }
+  });
+  carregar(); agendar();
+})();
+</script>
+</body>
+</html>

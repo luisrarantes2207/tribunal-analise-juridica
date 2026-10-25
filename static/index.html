@@ -593,8 +593,14 @@
     <div class="pc-grupo">
       <select id="pcZoom" aria-label="Zoom"><option value="fit" selected>Ajustar</option><option value="0.7">70%</option><option value="0.85">85%</option><option value="1">100%</option><option value="1.15">115%</option></select>
     </div>
+    <div class="pc-grupo">
+      <label class="pc-papel-rot" for="pcPapel">Papel</label>
+      <select id="pcPapel" aria-label="Papel da peça" title="Folha em branco como no Word, o timbrado do escritório ou o seu timbrado em .docx">
+        <option value="branco">Folha em branco</option><option value="escritorio">Timbrado do escritório</option><option value="proprio">Meu timbrado (.docx)…</option></select>
+      <input type="file" id="pcPapelArq" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+    </div>
     <div class="pc-grupo direita">
-      <button class="pc-b txt" id="pcExpDocx" type="button" title="Baixar no papel timbrado, editável no Word">Exportar DOCX</button>
+      <button class="pc-b txt" id="pcExpDocx" type="button" title="Baixar no papel escolhido, editável no Word">Exportar DOCX</button>
       <button class="pc-b txt" id="pcExpPdf" type="button" title="Baixar PDF paginado pelo Word, pronto para protocolo">Exportar PDF</button>
       <button class="btn-prio pc-nova" id="pcNovaAnalise" type="button" title="Confronta a peça editada com a contestação de novo">Nova análise</button>
     </div>

@@ -1403,6 +1403,7 @@ async function carregarConfig() {
     const dm = cfg.demo;
     document.body.classList.toggle("modo-demo", !!(dm && dm.ativo));
     if (dm && dm.ativo) {
+      if (!window.__demoPing) window.__demoPing = setInterval(() => { if (!document.hidden) fetch("/api/demo/ping", { cache: "no-store" }).catch(() => {}); }, 60000);
       const av = $("#demoAviso");
       av.hidden = false;
       av.innerHTML = `<b>Ambiente de demonstração.</b> Use só documentos <b>fictícios ou anonimizados</b> (LGPD). Hoje restam <b>${dm.analises} de ${dm.limite_analises}</b> análises e <b>${dm.chat} de ${dm.limite_chat}</b> mensagens do chat. <a href="/static/exemplo/index.html" target="_blank" rel="noopener">Baixar um processo de exemplo fictício</a>.`;

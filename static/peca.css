@@ -182,3 +182,8 @@ s.sug-risco{color:#B42318}
 .pc-b.prio{font-family:"Barlow Condensed",sans-serif;font-size:13.5px;letter-spacing:.6px;background:#1A7F37;color:#fff;border-color:#1A7F37}
 .pc-b.prio:hover{filter:brightness(1.1)}
 .pc-b.prio:disabled{opacity:.6;cursor:wait}
+
+/* v5.3: papel da peca: folha em branco (como o Word) ou timbrado */
+#aba-peca:not([data-papel="escritorio"]) .folha{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.25)}
+.pc-papel-rot{font-family:"Barlow Condensed",sans-serif;font-size:13px;letter-spacing:.6px;opacity:.8;margin-right:4px}
+#pcPapel{min-height:34px}

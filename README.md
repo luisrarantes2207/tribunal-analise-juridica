@@ -48,6 +48,18 @@ Com `TRIBUNAL_DEMO=1`: tela de senha, cada testador só vê as próprias sessõe
 administração (zerar sessões, trocar chave/modelo) ficam bloqueadas. `iniciar_demo.ps1` sobe a demonstração e um
 túnel `cloudflared` com endereço https público (o executável não vem no repositório).
 
+### Painel do administrador
+
+Com o modo demonstração ligado, `http://127.0.0.1:8779/admin` (só no computador que hospeda) mostra cada testador com IP,
+navegador, sessões, análises, mensagens e consumo de IA (chamadas, tokens, tempo), com as ações **derrubar**,
+**bloquear IP** e **permitir**, registro de eventos e limites ajustáveis ao vivo. No máximo 5 testadores online ao
+mesmo tempo (`TRIBUNAL_MAX_USUARIOS`); o sexto recebe "sala cheia".
+
+## Papel da peça
+
+Nas abas II e III, escolha **Folha em branco** (A4 com margens ABNT, como uma página nova do Word) ou envie o
+**seu timbrado em .docx**; a exportação usa o cabeçalho e o rodapé dele.
+
 ## Estrutura
 
 | Arquivo | Papel |
@@ -59,6 +71,6 @@ túnel `cloudflared` com endereço https público (o executável não vem no rep
 | `magistrado.py`, `folhas.py`, `dosimetria.py` | ferramentas determinísticas da v5 |
 | `chat_estrategia.py` | copiloto e `/adversario` |
 | `peca.py`, `peca_sugestao.py` | editor, peça sugerida e exportação |
-| `demo.py` | modo demonstração |
+| `demo.py`, `static/admin.html` | modo demonstração e painel do administrador |
 
 Histórico completo em `CHANGELOG.md`.

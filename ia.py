@@ -171,7 +171,25 @@ def _rotas(cred: dict) -> list[tuple[str, list[str]]]:
     return rotas
 
 
+# v5.3: gancho de consumo (modo demonstracao): AO_USAR(modelo, segundos, tokens_entrada, tokens_saida, ok)
+AO_USAR = None
+
+
 def _post(url: str, path: str, payload: dict, chave: str, timeout: int) -> dict:
+    if AO_USAR is None:
+        return _post_direto(url, path, payload, chave, timeout)
+    t0 = time.time()
+    try:
+        r = _post_direto(url, path, payload, chave, timeout)
+    except Exception:
+        AO_USAR(payload.get("model") or "", time.time() - t0, 0, 0, False)
+        raise
+    uso = r.get("usage") if isinstance(r, dict) and isinstance(r.get("usage"), dict) else {}
+    AO_USAR(payload.get("model") or "", time.time() - t0, uso.get("prompt_tokens") or 0, uso.get("completion_tokens") or 0, True)
+    return r
+
+
+def _post_direto(url: str, path: str, payload: dict, chave: str, timeout: int) -> dict:
     req = urllib.request.Request(
         url + path,
         data=json.dumps(payload).encode("utf-8"),

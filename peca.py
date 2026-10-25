@@ -332,19 +332,28 @@ def _cor_rgb(cor: str):
 
 
 def gerar_docx(conteudo: str, destino: Path, fonte: str = "Times New Roman", tamanho: float = 12,
-               entrelinha: float = 1.5) -> Path:
+               entrelinha: float = 1.5, timbrado="padrao") -> Path:
+    """timbrado (v5.3): "padrao" = modelos/timbrado.docx do escritorio (se existir); None = folha em branco, como uma
+    pagina nova do Word (A4, margens ABNT 3/2/3/2 cm); Path = o timbrado .docx enviado pelo usuario (margens dele)."""
     import docx
     from docx.enum.text import WD_ALIGN_PARAGRAPH as AL, WD_BREAK
     from docx.shared import Cm, Pt
 
-    d = docx.Document(str(TIMBRADO)) if TIMBRADO.exists() else docx.Document()  # sem timbrado: papel em branco
+    arq = TIMBRADO if timbrado == "padrao" else timbrado
+    arq = Path(arq) if arq and Path(arq).exists() else None
+    d = docx.Document(str(arq)) if arq else docx.Document()
     corpo = d.element.body
     for el in list(corpo):
         if not el.tag.endswith("sectPr"):
             corpo.remove(el)
-    for s in d.sections:  # margens que respeitam cabecalho e rodape do timbrado
-        s.top_margin, s.bottom_margin = Cm(3.5), Cm(3.8)
-        s.left_margin, s.right_margin = Cm(3.0), Cm(2.0)
+    for s in d.sections:
+        if arq is None:  # folha em branco: A4 com as margens da ABNT
+            s.page_width, s.page_height = Cm(21.0), Cm(29.7)
+            s.top_margin, s.bottom_margin = Cm(3.0), Cm(2.0)
+            s.left_margin, s.right_margin = Cm(3.0), Cm(2.0)
+        elif timbrado == "padrao":  # margens que respeitam cabecalho e rodape do timbrado do escritorio
+            s.top_margin, s.bottom_margin = Cm(3.5), Cm(3.8)
+            s.left_margin, s.right_margin = Cm(3.0), Cm(2.0)
     normal = d.styles["Normal"]
     normal.font.name, normal.font.size = fonte, Pt(tamanho)
     rpr = normal.element.get_or_add_rPr()

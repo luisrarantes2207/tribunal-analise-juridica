@@ -12,3 +12,4 @@ storage_config_teste.json
 reserva_modelos.json
 modelos/timbrado.docx
 .env
+publicar.py
