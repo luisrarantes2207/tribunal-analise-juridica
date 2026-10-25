@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+storage/
+uploads/
+vault_dpapi/
+*.log
+server.err
+senha_demo.txt
+link_demo.txt
+cloudflared.exe
+storage_config_teste.json
+reserva_modelos.json
+modelos/timbrado.docx
+.env

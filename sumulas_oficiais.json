@@ -1,0 +1,8 @@
+{
+  "observacao": "Texto oficial das sumulas usado pela verificacao (nunca a memoria do modelo). Chave: 'TRIBUNAL NUMERO'. Amplie conferindo no site do tribunal.",
+  "sumulas": {
+    "STJ 385": "Da anotação irregular em cadastro de proteção ao crédito, não cabe indenização por dano moral, quando preexistente legítima inscrição, ressalvado o direito ao cancelamento.",
+    "STJ 54": "Os juros moratórios fluem a partir do evento danoso, em caso de responsabilidade extracontratual.",
+    "STJ 362": "A correção monetária do valor da indenização do dano moral incide desde a data do arbitramento."
+  }
+}

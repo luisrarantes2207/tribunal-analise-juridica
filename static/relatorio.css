@@ -1,0 +1,146 @@
+/* Relatório A4 — Tribunal de Análise Jurídica v2
+   Versão em papel da direção visual: tinta quase preta, latão escuro, autor azul-cinza, réu terracota. */
+:root{
+  --tinta:#1B1813; --tinta2:#4A443B; --tinta3:#7A7266; --linha:#D9D2C4; --fundo:#FFFFFF; --papel:#FAF7F1;
+  --latao:#8C6F2C; --latao-claro:#C8A44D; --autor:#3E5F82; --autor-f:#EAF0F6; --reu:#8A3F2C; --reu-f:#F7ECE8;
+  --ok:#3F6E4A; --ok-f:#E8F1EA; --warn:#8A6516; --warn-f:#FBF2DD; --bad:#9A3A26; --bad-f:#F8E6E1;
+}
+@page{size:A4;margin:16mm 15mm 18mm 15mm;
+  @bottom-center{content:"Tribunal de Análise Jurídica · parecer de apoio — revisão do advogado obrigatória";font:8pt "Barlow",sans-serif;color:#7A7266}
+  @bottom-right{content:"pág. " counter(page) " de " counter(pages);font:8pt "Barlow",sans-serif;color:#7A7266}}
+@page:first{@bottom-center{content:none}@bottom-right{content:none}}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:#E9E5DD;color:var(--tinta);font:10.5pt/1.5 "Barlow",system-ui,sans-serif}
+h1,h2,h3,h4{font-family:"Cormorant Garamond",Georgia,serif;color:var(--tinta);margin:0}
+p{margin:4px 0 6px}
+ul,ol{margin:4px 0 6px;padding-left:20px}
+li{margin:2px 0}
+
+/* tela: folhas A4 centralizadas */
+.capa,.sec{background:var(--fundo);width:210mm;margin:12px auto;padding:16mm 15mm;box-shadow:0 1px 6px rgba(0,0,0,.18)}
+.barra-acoes{position:sticky;top:0;z-index:5;background:#1A1713;color:#EDE6D8;padding:10px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px}
+.barra-acoes button{background:#C8A44D;color:#1A1408;border:0;padding:10px 18px;font:600 14px "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+@media screen and (max-width:820px){.capa,.sec{width:auto;margin:8px;padding:16px}}
+
+/* impressão */
+@media print{
+  body{background:#fff}
+  .barra-acoes{display:none}
+  .capa,.sec{width:auto;margin:0;padding:0;box-shadow:none}
+  .sec{margin-top:8mm}
+  .sec.quebra{break-before:page;margin-top:0}
+  a{color:inherit}
+}
+
+/* capa */
+.capa{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+@media print{.capa{min-height:255mm;justify-content:flex-start}}
+.brasao{width:66px;height:66px;border:3px solid var(--latao-claro);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--latao);margin-top:6mm}
+.cap-sup{font:600 10pt "Barlow Condensed",sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--latao)}
+.capa h1{font-size:30pt;line-height:1.1;margin:6mm 0 2mm}
+.cap-proc{font:600 13pt "Barlow Condensed",sans-serif;letter-spacing:.08em;color:var(--tinta2);border-top:1px solid var(--latao-claro);border-bottom:1px solid var(--latao-claro);padding:4px 18px;margin-bottom:5mm}
+.cap-tab{border-collapse:collapse;width:100%;font-size:10pt;text-align:left}
+.cap-tab th{width:30%;font:600 9pt "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);padding:5px 8px;border-bottom:1px solid var(--linha);vertical-align:top}
+.cap-tab td{padding:5px 8px;border-bottom:1px solid var(--linha);word-break:break-word}
+.cap-placar{display:flex;gap:12px;margin:6mm 0 2mm;width:100%}
+.cap-placar .pl{flex:1;border:2px solid;padding:8px}
+.cap-placar .pl.autor{border-color:var(--autor);background:var(--autor-f)}
+.cap-placar .pl.reu{border-color:var(--reu);background:var(--reu-f)}
+.pl-r{font:600 9pt "Barlow Condensed",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta2)}
+.pl-n{font:700 30pt "Cormorant Garamond",serif}
+.pl.autor .pl-n{color:var(--autor)} .pl.reu .pl-n{color:var(--reu)}
+.indice-t{font-size:14pt;margin-top:5mm;align-self:flex-start;break-after:avoid;page-break-after:avoid}
+.indice{list-style:none;padding:0;margin:2mm 0;columns:2;width:100%;text-align:left;font-size:10pt}
+.indice li{padding:3px 0;border-bottom:1px dotted var(--linha);break-inside:avoid}
+.indice span{color:var(--latao);font-weight:600;display:inline-block;width:24px}
+.aviso-capa{font-size:8.5pt;color:var(--tinta3);border:1px solid var(--linha);padding:6px 10px;margin-top:auto;text-align:left}
+
+/* seções */
+.sec h2{font-size:19pt;border-bottom:2px solid var(--latao-claro);padding-bottom:3px;margin-bottom:8px;display:flex;align-items:baseline;gap:10px}
+.sec h2 span{font:600 11pt "Barlow Condensed",sans-serif;color:#fff;background:var(--latao);padding:1px 8px;letter-spacing:.06em}
+h4.sub{font-size:13pt;margin:12px 0 5px;color:var(--tinta);break-after:avoid}
+h5{font:600 9pt "Barlow Condensed",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta2);margin:8px 0 3px;break-after:avoid}
+h6{font:600 8.5pt "Barlow Condensed",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);margin:6px 0 3px;break-after:avoid}
+.nota{color:var(--tinta3);font-size:9pt}
+.pg{font:500 9pt "Barlow Condensed",sans-serif;color:var(--tinta3)}
+.campo{display:grid;grid-template-columns:34mm 1fr;gap:8px;padding:4px 0;border-bottom:1px solid #EEE8DC;break-inside:avoid}
+.campo .rot{font:600 8.5pt "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);padding-top:2px}
+.campo .val ul{margin:0}
+
+/* métricas */
+.metricas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:4px 0 10px}
+.metricas>div{border:1px solid var(--linha);padding:6px;background:var(--papel);break-inside:avoid}
+.metricas .autor{border-color:var(--autor)} .metricas .reu{border-color:var(--reu)}
+.m-r{font:600 8pt "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta3)}
+.m-n{font:700 20pt "Cormorant Garamond",serif;line-height:1.1}
+.metricas .autor .m-n{color:var(--autor)} .metricas .reu .m-n{color:var(--reu)}
+.m-s{font-size:8pt;color:var(--tinta2)}
+.barra{height:4px;background:#E7E1D4;margin-top:4px}
+.barra i{display:block;height:100%;background:var(--latao)}
+.metricas .autor .barra i{background:var(--autor)} .metricas .reu .barra i{background:var(--reu)}
+
+/* tabelas */
+.tab{width:100%;border-collapse:collapse;font-size:9.5pt;margin:4px 0 8px}
+.tab th{text-align:left;font:600 8.5pt "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta2);background:var(--papel);border-bottom:1.5px solid var(--latao-claro);padding:5px 6px}
+.tab td{border-bottom:1px solid var(--linha);padding:5px 6px;vertical-align:top;word-break:break-word}
+.tab tr{break-inside:avoid}
+.tab thead{display:table-header-group}
+.tab td.check{font-size:14pt;text-align:center}
+
+/* selos */
+.selo{display:inline-block;font:600 8pt "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border:1px solid;white-space:nowrap}
+.selo.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-f)}
+.selo.warn{color:var(--warn);border-color:var(--warn);background:var(--warn-f)}
+.selo.bad{color:var(--bad);border-color:var(--bad);background:var(--bad-f)}
+.selo.neutro{color:var(--tinta2);border-color:var(--linha);background:var(--papel)}
+.selo.autor{color:var(--autor);border-color:var(--autor);background:var(--autor-f)}
+.selo.reu{color:var(--reu);border-color:var(--reu);background:var(--reu-f)}
+.pt{font:600 8pt "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border:1px solid}
+.pt.autor{color:var(--autor);border-color:var(--autor)} .pt.reu{color:var(--reu);border-color:var(--reu)}
+.ok-t{color:var(--ok)} .warn-t{color:var(--warn)} .bad-t{color:var(--bad)}
+
+/* documentos */
+.doc{border:1px solid var(--linha);border-left:4px solid var(--latao);padding:8px 10px;margin:6px 0;background:var(--papel);break-inside:avoid}
+.doc.autor{border-left-color:var(--autor)} .doc.reu{border-left-color:var(--reu)}
+.doc h4{font-size:13pt}
+.meta{font-size:9pt;color:var(--tinta2)}
+
+/* tópicos do confronto */
+.topico{border:1px solid var(--linha);border-left:5px solid var(--tinta3);padding:8px 10px;margin:10px 0;break-inside:auto}
+.topico.ok{border-left-color:var(--ok)} .topico.warn{border-left-color:var(--warn)} .topico.bad{border-left-color:var(--bad)}
+.top-cab{display:flex;gap:8px;align-items:center;break-after:avoid}
+.top-cab .n{font:700 16pt "Cormorant Garamond",serif;color:var(--latao);min-width:22px}
+.top-cab .t{flex:1;font-weight:600;font-size:11pt}
+.top-met{font-size:8.5pt;color:var(--tinta2);margin:3px 0 5px}
+.veredito{background:var(--papel);border-left:3px solid var(--latao-claro);padding:5px 8px;margin:4px 0;font-size:10.5pt;break-inside:avoid}
+.lado{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:6px 0;break-inside:avoid}
+.lado .col{padding:6px 8px;border:1px solid var(--linha)}
+.lado .col.reu{background:var(--reu-f);border-color:#E5CFC7} .lado .col.autor{background:var(--autor-f);border-color:#CBD8E6}
+.lado .col.reu h5{color:var(--reu)} .lado .col.autor h5{color:var(--autor)}
+blockquote{margin:4px 0;padding:4px 8px;border-left:3px solid var(--autor);background:var(--autor-f);font-style:italic;break-inside:avoid}
+.minuta{font-family:Georgia,serif;font-size:10pt;line-height:1.6;background:var(--papel);border:1px solid var(--linha);border-left:3px solid var(--latao);padding:6px 10px;white-space:pre-wrap;break-inside:avoid}
+.caixa{padding:5px 8px;margin:5px 0;border:1px solid;font-size:9.5pt;break-inside:avoid}
+.caixa.ok{border-color:var(--ok);background:var(--ok-f)} .caixa.bad{border-color:var(--bad);background:var(--bad-f)}
+.caixa.warn{border-color:var(--warn);background:var(--warn-f)} .caixa.neutro{border-color:var(--linha);background:var(--papel)}
+.caixa ul{margin:2px 0 0}
+
+/* detalhes (legislação / jurisprudência / anexos / skills) */
+.item-det{border:1px solid var(--linha);padding:7px 10px;margin:7px 0;break-inside:avoid}
+.item-det.bad{border-left:4px solid var(--bad)} .item-det.warn{border-left:4px solid var(--warn)} .item-det.ok{border-left:4px solid var(--ok)}
+.det-cab{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:3px}
+.paragrafo{font-family:Georgia,serif;font-size:9.8pt;line-height:1.6;background:var(--papel);border:1px solid var(--linha);padding:6px 9px;color:var(--tinta2)}
+.paragrafo mark{background:#F3E2A0;color:var(--tinta);font-weight:600;padding:0 2px;border-bottom:2px solid var(--latao-claro)}
+.link{font-size:8pt;color:var(--autor);word-break:break-all;margin-top:4px}
+.sk-t{font:700 14pt "Cormorant Garamond",serif;color:var(--latao)}
+
+/* decisão */
+.sentenca{border:2px solid var(--latao-claro);background:var(--papel);padding:10px 12px;text-align:center;margin-bottom:8px;break-inside:avoid}
+.sentenca .disp{font:700 20pt "Cormorant Garamond",serif;text-transform:uppercase;letter-spacing:.04em;color:var(--latao)}
+.sentenca .venc{font:600 10pt "Barlow Condensed",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta2)}
+.recado{font-style:italic;border-left:3px solid var(--latao-claro);background:var(--papel);padding:6px 10px;break-inside:avoid}
+
+/* v3.0: placar do potencial e checklist */
+.cap-placar .pl.ok{border-color:#2F6B3E;background:#EAF3EC}
+.pl.ok .pl-n{color:#2F6B3E}
+.check-l{list-style:none;padding-left:0}

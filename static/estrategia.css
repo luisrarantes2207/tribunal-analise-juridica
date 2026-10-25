@@ -1,0 +1,78 @@
+/* v3.2 · aba IV Provas & Estratégia (galeria de provas + chat de estratégia) */
+.estrategia{padding:16px 20px 28px;max-width:1720px;margin:0 auto;width:100%}
+.es-grade{display:grid;grid-template-columns:minmax(420px,1fr) minmax(460px,1.1fr);gap:18px;align-items:start}
+.es-col{background:var(--painel);border:1px solid var(--linha);padding:14px 16px;display:grid;gap:10px;min-width:0}
+.es-col.chat{position:sticky;top:12px;max-height:calc(100vh - 90px);grid-template-rows:auto auto 1fr auto}
+.es-cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px}
+.es-cab h2,.es-cab h3{margin:0;font-family:"Cormorant Garamond",Georgia,serif;color:var(--latao-claro)}
+.es-cab h2{font-size:22px}.es-cab h3{font-size:18px}.es-cab.sub{margin-top:8px;border-top:1px solid var(--linha);padding-top:10px}
+.es-cab .btn-mini{margin-left:auto}
+.es-totais{display:flex;flex-wrap:wrap;gap:6px}
+.es-totais span{font-family:"Barlow Condensed",sans-serif;font-size:12.5px;letter-spacing:.8px;padding:2px 8px;border:1px solid var(--linha2);color:var(--papel2)}
+.es-totais b{color:var(--papel)}.es-totais .falta{border-color:var(--erro);color:#E5A08E}
+.es-filtros{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.es-filtros button{background:var(--base2);border:1px solid var(--linha2);color:var(--papel2);padding:4px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+.es-filtros button.on{border-color:var(--latao);color:var(--latao-claro)}
+.es-filtros input{margin-left:auto;background:var(--base2);border:1px solid var(--linha2);color:var(--papel);padding:5px 9px;font:inherit;min-width:160px}
+.es-galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;max-height:560px;overflow:auto;padding-right:4px}
+.prova{background:var(--base2);border:1px solid var(--linha);border-left:3px solid var(--madeira2);padding:9px 11px;display:grid;gap:5px}
+.prova.anexo{border-left-color:#3FA35B}.prova.fora{opacity:.55}.prova.ok{box-shadow:inset 0 0 0 1px rgba(110,155,120,.45)}
+.pv-top{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between}
+.pv-orig{font-family:"Barlow Condensed",sans-serif;font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--papel3)}
+.prova.anexo .pv-orig{color:#8FD3A2}
+.pv-usa{font-size:11.5px;color:var(--latao-claro);border:1px solid #5A4426;padding:0 6px}
+.pv-tit{font-size:13.5px;line-height:1.45;color:var(--papel)}
+.pv-desc{font-size:12.5px;color:var(--papel2);line-height:1.45}
+.pv-flags{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--papel2)}
+.pv-flags label{display:flex;gap:5px;align-items:center;cursor:pointer}
+.es-faltam{display:grid;gap:6px}
+.falta-it{border:1px dashed #7A3B2C;background:rgba(180,85,63,.06);padding:8px 10px;display:grid;gap:4px}
+.falta-it .n{color:#E5A08E;font-weight:700}.falta-it .btn-mini{justify-self:start;cursor:pointer}
+.falta-it.enviando{opacity:.6}
+.es-aviso{border-left:3px solid var(--alerta);background:rgba(201,154,62,.08);padding:8px 10px;font-size:13px}
+.es-chips{display:flex;flex-wrap:wrap;gap:6px}
+.es-chip{background:var(--base2);border:1px solid var(--linha2);color:var(--papel2);padding:4px 10px;font:inherit;font-size:12.5px;cursor:pointer;border-radius:12px}
+.es-chip:hover{border-color:var(--latao);color:var(--latao-claro)}
+.es-log{overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px;min-height:260px}
+.es-boas{color:var(--papel2);font-size:13.5px;line-height:1.6;border:1px solid var(--linha);padding:12px;background:var(--base2)}
+.es-msg{padding:10px 12px;line-height:1.6;font-size:13.5px;max-width:96%}
+.es-msg.eu{align-self:flex-end;background:#1E2A38;border:1px solid #3D5A7A;color:#DCE8F5}
+.es-msg.ia{align-self:flex-start;background:var(--base2);border:1px solid var(--linha2);display:grid;gap:8px}
+.es-msg.sis{color:var(--papel3);font-style:italic}.es-msg.erro{color:#E5A08E;border:1px solid var(--erro)}
+.es-vis{border-left:3px solid var(--latao);padding:4px 10px;color:var(--papel2)}
+.es-vis.adv{border-left-color:#6E8FB2}
+.es-vis span{display:block;font-family:"Barlow Condensed",sans-serif;font-size:11.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--latao)}
+.es-vis.adv span{color:#9FB6CE}
+.es-sim{border:1px solid #2E5B3A;background:rgba(63,163,91,.08);padding:8px 10px;display:grid;gap:4px}
+.es-sim-cab{font-family:"Barlow Condensed",sans-serif;font-size:14px;letter-spacing:.6px}
+.es-sim-cab i{font-style:normal;color:#8FD3A2;font-size:17px}.es-sim-cab .sobe{color:#8FD3A2;margin-left:6px}
+.es-sim-t{font-size:12.5px}
+.es-prop{display:grid;gap:5px}
+.es-prop-cab{font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:#8FD3A2}
+.es-prop-ac{display:flex;gap:6px;flex-wrap:wrap}
+.es-mod{text-align:right}
+.es-envio{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.es-envio textarea{background:var(--base2);border:1px solid var(--linha2);color:var(--papel);padding:8px 10px;font:inherit;resize:vertical}
+@media(max-width:1100px){.es-grade{grid-template-columns:1fr}.es-col.chat{position:static;max-height:none}}
+
+/* v3.3: chat no painel da aba III; aba IV so com a galeria */
+.es-grade.so-galeria{grid-template-columns:1fr}
+.pc-tab.so-sug{display:none}.modo-sugestao .pc-tab.so-sug{display:inline-flex}
+.pc-chat{display:grid;gap:8px;grid-template-rows:auto auto 1fr auto;max-height:calc(100vh - 210px)}
+.pc-chat[hidden]{display:none}
+.pc-chat .pv-cab{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}.pc-chat .pv-cab .btn-mini{margin-left:auto}
+.pc-chat .es-log{min-height:220px;max-height:none}.pc-chat .es-msg{max-width:100%}
+.pc-chat .es-envio{grid-template-columns:1fr}
+
+/* v5.0: copiloto forense e /adversario */
+.es-chip.adv{border-color:#B4553F;color:#E3A08F;font-weight:600}
+.es-chip.adv:hover{border-color:#E3A08F;color:#F3C2B6}
+.es-msg.adv-modo{border-left:3px solid #B4553F}
+.es-adv-cab{font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:#E3A08F}
+.es-golpe{display:grid;gap:4px;padding:6px 10px;border-left:3px solid #C99A3E;background:rgba(201,154,62,.06)}
+.es-golpe.alta{border-left-color:#B4553F;background:rgba(180,85,63,.08)}
+.es-golpe.baixa{border-left-color:#6E9B78;background:rgba(110,155,120,.06)}
+.es-golpe-cab{font-weight:600}
+.es-golpe .gv{font-family:"Barlow Condensed",sans-serif;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor;border-radius:8px;margin-right:4px}
+.es-golpe.alta .gv{color:#E3A08F}.es-golpe.media .gv{color:#E2C27F}.es-golpe.baixa .gv{color:#9FD0AB}
+.es-blind{color:#8FD3A2}

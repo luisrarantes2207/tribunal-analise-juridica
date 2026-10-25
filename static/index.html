@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tribunal v2 · Sala de Audiência</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Orbitron:wght@700;900&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/styles.css">
+<link rel="stylesheet" href="/static/peca.css">
+<link rel="stylesheet" href="/static/estrategia.css">
+</head>
+<body>
+<div id="demoAviso" class="demo-aviso" role="note" hidden></div>
+<div id="avisoServidor" class="aviso-servidor" role="alert" hidden>Servidor da v2 fora do ar — reconectando automaticamente… (a página volta sozinha quando ele subir)</div>
+<nav class="abas" role="tablist" aria-label="Áreas do tribunal">
+  <button class="aba on" role="tab" aria-selected="true" aria-controls="aba-analise" data-aba="analise"><span class="aba-n">I</span>Análise da sessão</button>
+  <button class="aba" role="tab" aria-selected="false" aria-controls="aba-peca" data-aba="peca"><span class="aba-n">II</span>Peça Processual</button>
+  <button class="aba" role="tab" aria-selected="false" aria-controls="aba-peca" data-aba="sugestao"><span class="aba-n">III</span>Peça Sugestão</button>
+  <button class="aba" role="tab" aria-selected="false" aria-controls="aba-estrategia" data-aba="estrategia"><span class="aba-n">IV</span>Galeria de Provas</button>
+  <span class="aba-ajuda">Leia, confronte e decida na Análise · edite na Peça · revise em verde a peça sugerida</span>
+</nav>
+<div class="sala" id="aba-analise" role="tabpanel">
+
+  <!-- ======================= CENÁRIO DA SALA (v2: sala de audiências do Juizado) ======================= -->
+  <section class="cenario" aria-label="Sala de audiências do Juizado Especial">
+    <svg id="cena" viewBox="0 0 1200 760" role="img" aria-labelledby="cenaTitulo">
+      <title id="cenaTitulo">Sala de audiências: juiz na tribuna central elevada, mesa do autor à esquerda e mesa do réu à direita</title>
+      <defs>
+        <linearGradient id="parede" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2A2118"/><stop offset="60%" stop-color="#1F1913"/><stop offset="100%" stop-color="#17120D"/>
+        </linearGradient>
+        <linearGradient id="paredeLat" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#130F0A"/><stop offset="100%" stop-color="#211A13"/>
+        </linearGradient>
+        <linearGradient id="paredeLatD" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0%" stop-color="#130F0A"/><stop offset="100%" stop-color="#211A13"/>
+        </linearGradient>
+        <linearGradient id="chao" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2E2116"/><stop offset="100%" stop-color="#3A2A1C"/>
+        </linearGradient>
+        <linearGradient id="madeira" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#6A4A2E"/><stop offset="55%" stop-color="#4A3220"/><stop offset="100%" stop-color="#2E2013"/>
+        </linearGradient>
+        <linearGradient id="madeiraEsc" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4E3520"/><stop offset="100%" stop-color="#241810"/>
+        </linearGradient>
+        <linearGradient id="tampo" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7A5636"/><stop offset="100%" stop-color="#5A3E26"/>
+        </linearGradient>
+        <linearGradient id="couro" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2E2013"/><stop offset="100%" stop-color="#160F09"/>
+        </linearGradient>
+        <linearGradient id="luzJanela" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F5E3B8" stop-opacity=".9"/><stop offset="100%" stop-color="#E8CB87" stop-opacity=".5"/>
+        </linearGradient>
+        <linearGradient id="feixe" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#F5E3B8" stop-opacity=".10"/><stop offset="100%" stop-color="#F5E3B8" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="feixeD" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F5E3B8" stop-opacity=".10"/><stop offset="100%" stop-color="#F5E3B8" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="latão" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#E4C97A"/><stop offset="50%" stop-color="#C8A44D"/><stop offset="100%" stop-color="#8C6F2C"/>
+        </linearGradient>
+        <radialGradient id="foco" cx="50%" cy="30%" r="55%">
+          <stop offset="0%" stop-color="#FFE9B0" stop-opacity=".16"/><stop offset="100%" stop-color="#FFE9B0" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="vinheta" cx="50%" cy="45%" r="75%">
+          <stop offset="58%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".6"/>
+        </radialGradient>
+        <!-- balança da justiça em vetor (substitui o emoji) -->
+        <symbol id="balanca" viewBox="0 0 24 24">
+          <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 4v16M7 20.5h10M4 7h16"/>
+            <circle cx="12" cy="3.4" r="1"/>
+            <path d="M4 7 1.6 13h4.8L4 7ZM20 7l-2.4 6h4.8L20 7Z"/>
+            <path d="M1.6 13a2.4 1.6 0 0 0 4.8 0M17.6 13a2.4 1.6 0 0 0 4.8 0"/>
+          </g>
+        </symbol>
+        <!-- avatares: mesmo raio para as partes, juiz levemente maior (hierarquia) -->
+        <clipPath id="clip-autor"><circle cx="255" cy="428" r="56"/></clipPath>
+        <clipPath id="clip-reu"><circle cx="945" cy="428" r="56"/></clipPath>
+        <clipPath id="clip-juiz"><circle cx="600" cy="318" r="48"/></clipPath>
+        <!-- placar: grade de LEDs e brilho dos digitos -->
+        <pattern id="ledGrade" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".75" fill="#16120E"/></pattern>
+        <filter id="brilhoLed" x="-20%" y="-30%" width="140%" height="160%">
+          <feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ============ arquitetura: teto, paredes laterais, parede de fundo, piso ============ -->
+      <polygon points="0,0 1200,0 1070,34 130,34" fill="#0F0C08"/>
+      <polygon points="0,0 130,34 130,470 0,600" fill="url(#paredeLat)"/>
+      <polygon points="1200,0 1070,34 1070,470 1200,600" fill="url(#paredeLatD)"/>
+      <rect x="130" y="34" width="940" height="436" fill="url(#parede)"/>
+      <polygon points="0,600 130,470 1070,470 1200,600 1200,760 0,760" fill="url(#chao)"/>
+      <!-- tábuas do piso convergindo ao ponto de fuga -->
+      <g stroke="#000" stroke-opacity=".22" stroke-width="1.5">
+        <line x1="0" y1="760" x2="377" y2="470"/><line x1="150" y1="760" x2="433" y2="470"/>
+        <line x1="300" y1="760" x2="489" y2="470"/><line x1="450" y1="760" x2="544" y2="470"/>
+        <line x1="600" y1="760" x2="600" y2="470"/><line x1="750" y1="760" x2="656" y2="470"/>
+        <line x1="900" y1="760" x2="711" y2="470"/><line x1="1050" y1="760" x2="767" y2="470"/>
+        <line x1="1200" y1="760" x2="823" y2="470"/>
+        <line x1="70" y1="530" x2="1130" y2="530"/><line x1="0" y1="610" x2="1200" y2="610"/>
+      </g>
+
+      <!-- friso superior com o nome da sala -->
+      <rect x="130" y="30" width="940" height="58" fill="#1A140E"/>
+      <line x1="130" y1="88" x2="1070" y2="88" stroke="url(#latão)" stroke-width="2" opacity=".7"/>
+      <text id="faixa-versao" x="600" y="56" text-anchor="middle" class="faixa">TRIBUNAL DE ANÁLISE JURÍDICA · V2</text>
+      <!-- v4.1/v5.0: dual engine - tipo de confronto, rito e materia identificados nos documentos -->
+      <text id="faixa-confronto" x="600" y="78" text-anchor="middle" class="faixa-sub">DUAL ENGINE V5.0 · ENVIE AS DUAS PEÇAS PARA IDENTIFICAR O CONFRONTO</text>
+
+      <!-- lambri (painéis de madeira) da parede de fundo -->
+      <rect x="130" y="250" width="940" height="220" fill="#2A1D12"/>
+      <line x1="130" y1="250" x2="1070" y2="250" stroke="#7A5636" stroke-width="3"/>
+      <g fill="none" stroke="#4A3220" stroke-width="2">
+        <rect x="146" y="266" width="86" height="186" rx="2"/><rect x="246" y="266" width="86" height="186" rx="2"/>
+        <rect x="346" y="266" width="86" height="186" rx="2"/>
+        <rect x="768" y="266" width="86" height="186" rx="2"/><rect x="868" y="266" width="86" height="186" rx="2"/>
+        <rect x="968" y="266" width="86" height="186" rx="2"/>
+      </g>
+
+      <!-- janelas altas nas paredes laterais, em perspectiva -->
+      <g>
+        <polygon points="28,74 104,98 104,318 28,356" fill="url(#luzJanela)" stroke="#4A3220" stroke-width="5"/>
+        <g stroke="#4A3220" stroke-width="4"><line x1="66" y1="86" x2="66" y2="337"/><line x1="28" y1="215" x2="104" y2="208"/></g>
+        <polygon points="1172,74 1096,98 1096,318 1172,356" fill="url(#luzJanela)" stroke="#4A3220" stroke-width="5"/>
+        <g stroke="#4A3220" stroke-width="4"><line x1="1134" y1="86" x2="1134" y2="337"/><line x1="1172" y1="215" x2="1096" y2="208"/></g>
+      </g>
+      <!-- feixes de luz das janelas -->
+      <polygon points="28,74 104,98 470,640 140,700" fill="url(#feixe)" pointer-events="none"/>
+      <polygon points="1172,74 1096,98 730,640 1060,700" fill="url(#feixeD)" pointer-events="none"/>
+
+      <!-- espaldar atrás da tribuna, com o brasão -->
+      <path d="M476,470 V140 Q476,96 520,96 H680 Q724,96 724,140 V470 Z" fill="url(#madeiraEsc)" stroke="#6A4A2E" stroke-width="3"/>
+      <path d="M492,470 V146 Q492,112 526,112 H674 Q708,112 708,146 V470" fill="none" stroke="#7A5636" stroke-width="1.5" opacity=".7"/>
+      <g transform="translate(600,168)">
+        <circle r="46" fill="#1E150D" stroke="url(#latão)" stroke-width="3"/>
+        <circle r="38" fill="none" stroke="url(#latão)" stroke-width="1" opacity=".6"/>
+        <use href="#balanca" x="-24" y="-24" width="48" height="48" style="color:#E4C97A"/>
+      </g>
+      <rect width="1200" height="760" fill="url(#foco)" pointer-events="none"/>
+
+      <!-- ============ TRIBUNA DO JUIZ (centro, elevada) ============ -->
+      <g id="juiz">
+        <rect x="546" y="238" width="108" height="150" rx="18" fill="url(#couro)" stroke="#4A3220" stroke-width="2"/>
+        <g fill="#C8A44D" opacity=".7">
+          <circle cx="556" cy="252" r="2"/><circle cx="644" cy="252" r="2"/><circle cx="556" cy="300" r="2"/><circle cx="644" cy="300" r="2"/>
+        </g>
+        <g class="avatar">
+          <circle cx="600" cy="318" r="52" fill="#0E0B08" stroke="#C8A44D" stroke-width="2.5"/>
+          <image id="avatar-juiz-img" href="/static/img/juiz-m.png" x="552" y="270" width="96" height="96"
+                 preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-juiz)"/>
+          <circle cx="600" cy="318" r="48" fill="none" stroke="#C8A44D" stroke-width="2"/>
+        </g>
+        <rect x="396" y="370" width="408" height="20" rx="3" fill="url(#tampo)" stroke="#8A613C" stroke-width="2"/>
+        <rect x="412" y="390" width="376" height="104" fill="url(#madeira)" stroke="#7A5636" stroke-width="2.5"/>
+        <g fill="#3A2A1C" stroke="#7A5636" stroke-width="1.5">
+          <rect x="422" y="402" width="22" height="80" rx="2"/><rect x="756" y="402" width="22" height="80" rx="2"/>
+        </g>
+        <rect x="452" y="400" width="296" height="84" rx="3" fill="#1E150D" stroke="url(#latão)" stroke-width="1.8"/>
+        <rect x="458" y="406" width="284" height="72" rx="2" fill="none" stroke="#5A4426" stroke-width="1"/>
+        <text id="mesa-juiz-cargo" x="600" y="426" text-anchor="middle" class="placa">JUIZ DE DIREITO</text>
+        <text id="mesa-juiz-nome" x="600" y="450" text-anchor="middle" class="mesa-linha" data-max="270">Presidência</text>
+        <text id="mesa-juiz-vara" x="600" y="469" text-anchor="middle" class="mesa-oab" data-max="276" data-min="9"></text>
+        <!-- v5.0: perfil tatico do magistrado (atos do juizo nos autos) sob a bancada -->
+        <text id="mesa-juiz-perfil" x="600" y="504" text-anchor="middle" class="mesa-perfil"></text>
+        <rect x="384" y="494" width="432" height="14" fill="#241810" stroke="#4A3220" stroke-width="1.5"/>
+        <rect x="370" y="508" width="460" height="12" fill="#1A120B"/>
+        <path d="M640,370 L652,344" stroke="#7E7565" stroke-width="2.5"/><circle cx="653" cy="342" r="4" fill="#3A322A"/>
+        <rect x="526" y="362" width="44" height="9" rx="1" fill="#D8CDB4" transform="rotate(-3 548 366)"/>
+      </g>
+
+      <!-- mesa do conciliador / secretaria (frente da tribuna) -->
+      <g opacity=".95">
+        <rect x="574" y="520" width="52" height="30" rx="2" fill="#16130F" stroke="#443B30" stroke-width="1.5"/>
+        <rect x="514" y="548" width="172" height="14" rx="2" fill="url(#tampo)"/>
+        <rect x="524" y="562" width="152" height="46" fill="url(#madeiraEsc)" stroke="#4A3220" stroke-width="1.5"/>
+        <rect x="532" y="542" width="34" height="8" rx="1" fill="#D8CDB4" transform="rotate(-5 549 546)"/>
+        <rect x="638" y="542" width="34" height="8" rx="1" fill="#D8CDB4" transform="rotate(4 655 546)"/>
+        <text x="600" y="590" text-anchor="middle" class="pulpito-sub">CONCILIAÇÃO</text>
+      </g>
+
+      <!-- ============ MESA AUTOR ============ -->
+      <g id="pulpit-autor" class="pulpit" data-parte="autor" tabindex="0" role="button" aria-label="Mesa do autor: enviar réplica em PDF">
+        <ellipse cx="255" cy="700" rx="230" ry="16" fill="#000" opacity=".45"/>
+        <rect x="191" y="346" width="128" height="176" rx="20" fill="url(#couro)" stroke="#4A3220" stroke-width="2"/>
+        <g fill="#C8A44D" opacity=".6"><circle cx="203" cy="360" r="2"/><circle cx="307" cy="360" r="2"/></g>
+        <g class="avatar">
+          <circle cx="255" cy="428" r="60" fill="#0E0B08" stroke="#8A613C" stroke-width="2.5"/>
+          <image id="avatar-autor-img" href="/static/img/adv-m1.png" x="199" y="372" width="112" height="112"
+                 preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-autor)"/>
+          <circle cx="255" cy="428" r="56" fill="none" stroke="#6E8FB2" stroke-width="3"/>
+        </g>
+        <polygon points="62,518 448,518 480,548 30,548" fill="url(#tampo)" stroke="#8A613C" stroke-width="2"/>
+        <rect x="95" y="507" width="48" height="13" rx="1" fill="#D8CDB4" transform="rotate(-4 119 513)"/>
+        <rect x="151" y="509" width="36" height="11" rx="1" fill="#C9BEA4" transform="rotate(3 169 514)"/>
+        <path d="M375,518 L389,490" stroke="#7E7565" stroke-width="2.5"/><circle cx="390" cy="488" r="4.5" fill="#3A322A"/>
+        <rect class="moldura" x="34" y="548" width="442" height="146" fill="url(#madeiraEsc)" stroke="#6A4A2E" stroke-width="3"/>
+        <rect x="42" y="556" width="426" height="130" fill="none" stroke="#4A3220" stroke-width="1"/>
+        <g transform="rotate(-12 118 621)">
+          <rect x="74" y="577" width="88" height="88" rx="5" fill="#2B3E52" stroke="#9FB6CE" stroke-width="2"/>
+          <use href="#balanca" x="88" y="591" width="60" height="60" style="color:#C9D8E8"/>
+        </g>
+        <line x1="196" y1="566" x2="196" y2="676" stroke="#6A4A2E" stroke-width="1.2"/>
+        <text id="mesa-autor-papel" x="338" y="582" text-anchor="middle" class="mesa-papel">AUTOR · RÉPLICA</text>
+        <text id="mesa-autor-parte" x="338" y="610" text-anchor="middle" class="mesa-linha" data-max="250">Autor: —</text>
+        <text id="mesa-autor-rep" x="338" y="634" text-anchor="middle" class="mesa-linha sec" data-max="250">Advogado: —</text>
+        <text id="mesa-autor-oab" x="338" y="654" text-anchor="middle" class="mesa-oab" data-max="250"></text>
+        <text id="status-autor" x="338" y="678" text-anchor="middle" class="pulpito-status">sem peça</text>
+      </g>
+      <!-- ============ MESA REU ============ -->
+      <g id="pulpit-reu" class="pulpit" data-parte="reu" tabindex="0" role="button" aria-label="Mesa do réu: enviar contestação em PDF">
+        <ellipse cx="945" cy="700" rx="230" ry="16" fill="#000" opacity=".45"/>
+        <rect x="881" y="346" width="128" height="176" rx="20" fill="url(#couro)" stroke="#4A3220" stroke-width="2"/>
+        <g fill="#C8A44D" opacity=".6"><circle cx="893" cy="360" r="2"/><circle cx="997" cy="360" r="2"/></g>
+        <g class="avatar">
+          <circle cx="945" cy="428" r="60" fill="#0E0B08" stroke="#8A613C" stroke-width="2.5"/>
+          <image id="avatar-reu-img" href="/static/img/adv-h2.png" x="889" y="372" width="112" height="112"
+                 preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-reu)"/>
+          <circle cx="945" cy="428" r="56" fill="none" stroke="#A2543F" stroke-width="3"/>
+        </g>
+        <polygon points="752,518 1138,518 1170,548 720,548" fill="url(#tampo)" stroke="#8A613C" stroke-width="2"/>
+        <rect x="785" y="507" width="48" height="13" rx="1" fill="#D8CDB4" transform="rotate(-4 809 513)"/>
+        <rect x="841" y="509" width="36" height="11" rx="1" fill="#C9BEA4" transform="rotate(3 859 514)"/>
+        <path d="M1065,518 L1079,490" stroke="#7E7565" stroke-width="2.5"/><circle cx="1080" cy="488" r="4.5" fill="#3A322A"/>
+        <rect class="moldura" x="724" y="548" width="442" height="146" fill="url(#madeiraEsc)" stroke="#6A4A2E" stroke-width="3"/>
+        <rect x="732" y="556" width="426" height="130" fill="none" stroke="#4A3220" stroke-width="1"/>
+        <g transform="rotate(-12 808 621)">
+          <rect x="764" y="577" width="88" height="88" rx="5" fill="#5B1B22" stroke="url(#latão)" stroke-width="2"/>
+          <use href="#balanca" x="778" y="591" width="60" height="60" style="color:#E4C97A"/>
+        </g>
+        <line x1="886" y1="566" x2="886" y2="676" stroke="#6A4A2E" stroke-width="1.2"/>
+        <text id="mesa-reu-papel" x="1028" y="582" text-anchor="middle" class="mesa-papel">RÉU · CONTESTAÇÃO</text>
+        <text id="mesa-reu-parte" x="1028" y="610" text-anchor="middle" class="mesa-linha" data-max="250">Réu: —</text>
+        <text id="mesa-reu-rep" x="1028" y="634" text-anchor="middle" class="mesa-linha sec" data-max="250">Advogado: —</text>
+        <text id="mesa-reu-oab" x="1028" y="654" text-anchor="middle" class="mesa-oab" data-max="250"></text>
+        <text id="status-reu" x="1028" y="678" text-anchor="middle" class="pulpito-status">sem peça</text>
+      </g>
+      <!-- placares de êxito (estilo placar de ginásio): número em LED, barra segmentada separada -->
+      <g id="placar-autor" class="placar autor" aria-label="Placar de êxito do autor">
+        <rect x="143" y="150" width="224" height="188" rx="10" fill="#0A0806" stroke="url(#latão)" stroke-width="3"/>
+        <rect x="149" y="156" width="212" height="176" rx="6" fill="none" stroke="#2A2118" stroke-width="1"/>
+        <g fill="#8C6F2C"><circle cx="154" cy="161" r="2"/><circle cx="356" cy="161" r="2"/><circle cx="154" cy="327" r="2"/><circle cx="356" cy="327" r="2"/></g>
+        <rect x="159" y="164" width="192" height="26" rx="3" fill="#24405F"/>
+        <text x="255" y="182.5" text-anchor="middle" class="placar-time">AUTOR</text>
+        <rect x="159" y="196" width="192" height="80" rx="4" fill="#050403" stroke="#3D6A99" stroke-width="1.5"/>
+        <rect x="159" y="196" width="192" height="80" rx="4" fill="url(#ledGrade)"/>
+        <text id="placar-autor-num" x="255" y="259" text-anchor="middle" class="placar-num autor" filter="url(#brilhoLed)">--</text>
+        <text x="171" y="291" class="placar-rot">CHANCE DE ÊXITO</text>
+        <text id="placar-autor-lider" x="339" y="291" text-anchor="end" class="placar-lider autor"></text>
+        <g id="placar-autor-segs" transform="translate(159,297)"></g>
+        <text id="placar-autor-pot" x="255" y="326" text-anchor="middle" class="placar-pot"></text>
+      </g>
+      <g id="placar-reu" class="placar reu" aria-label="Placar de êxito do réu">
+        <rect x="833" y="150" width="224" height="188" rx="10" fill="#0A0806" stroke="url(#latão)" stroke-width="3"/>
+        <rect x="839" y="156" width="212" height="176" rx="6" fill="none" stroke="#2A2118" stroke-width="1"/>
+        <g fill="#8C6F2C"><circle cx="844" cy="161" r="2"/><circle cx="1046" cy="161" r="2"/><circle cx="844" cy="327" r="2"/><circle cx="1046" cy="327" r="2"/></g>
+        <rect x="849" y="164" width="192" height="26" rx="3" fill="#5E241B"/>
+        <text x="945" y="182.5" text-anchor="middle" class="placar-time">RÉU</text>
+        <rect x="849" y="196" width="192" height="80" rx="4" fill="#050403" stroke="#A2543F" stroke-width="1.5"/>
+        <rect x="849" y="196" width="192" height="80" rx="4" fill="url(#ledGrade)"/>
+        <text id="placar-reu-num" x="945" y="259" text-anchor="middle" class="placar-num reu" filter="url(#brilhoLed)">--</text>
+        <text x="861" y="291" class="placar-rot">CHANCE DE ÊXITO</text>
+        <text id="placar-reu-lider" x="1029" y="291" text-anchor="end" class="placar-lider reu"></text>
+        <g id="placar-reu-segs" transform="translate(849,297)"></g>
+        <text id="placar-reu-pot" x="945" y="326" text-anchor="middle" class="placar-pot"></text>
+      </g>
+
+      <!-- balaustrada que separa o público -->
+      <g pointer-events="none">
+        <rect x="0" y="704" width="1200" height="10" fill="#6A4A2E" stroke="#8A613C" stroke-width="1.5"/>
+        <g fill="#3A2A1C" stroke="#241810" stroke-width="1">
+          <rect x="20" y="714" width="10" height="46"/><rect x="70" y="714" width="10" height="46"/><rect x="120" y="714" width="10" height="46"/>
+          <rect x="170" y="714" width="10" height="46"/><rect x="220" y="714" width="10" height="46"/><rect x="270" y="714" width="10" height="46"/>
+          <rect x="320" y="714" width="10" height="46"/><rect x="370" y="714" width="10" height="46"/><rect x="420" y="714" width="10" height="46"/>
+          <rect x="770" y="714" width="10" height="46"/><rect x="820" y="714" width="10" height="46"/><rect x="870" y="714" width="10" height="46"/>
+          <rect x="920" y="714" width="10" height="46"/><rect x="970" y="714" width="10" height="46"/><rect x="1020" y="714" width="10" height="46"/>
+          <rect x="1070" y="714" width="10" height="46"/><rect x="1120" y="714" width="10" height="46"/><rect x="1170" y="714" width="10" height="46"/>
+        </g>
+        <rect x="470" y="700" width="14" height="60" fill="#4A3220"/><rect x="716" y="700" width="14" height="60" fill="#4A3220"/>
+        <g fill="#0C0906" opacity=".85">
+          <circle cx="90" cy="742" r="22"/><circle cx="196" cy="750" r="20"/><circle cx="1004" cy="750" r="20"/><circle cx="1110" cy="742" r="22"/>
+        </g>
+      </g>
+
+      <rect width="1200" height="760" fill="url(#vinheta)" pointer-events="none"/>
+    </svg>
+
+    <div class="legenda">
+      <span class="chip chip-autor">AUTOR<span class="sub" id="chip-autor-sub"> · Réplica</span></span>
+      <span class="chip chip-juiz">JUIZ<span class="sub" id="chip-juiz-sub"> · confronto das peças</span></span>
+      <span class="chip chip-reu">RÉU<span class="sub" id="chip-reu-sub"> · Contestação</span></span>
+    </div>
+  </section>
+
+  <!-- ======================= PAINEL OPERACIONAL ======================= -->
+  <section class="operacional">
+
+    <div class="bloco">
+      <div class="bloco-cab">
+        <span class="num">01</span>
+        <h2>Documentos Jurídicos</h2>
+      </div>
+      <p class="nota">Envie a réplica (autor) e a contestação (réu) em PDF, pelos campos ou clicando nas mesas da sala. Cada documento recebe um resumo automático.</p>
+      <div class="grade-2">
+        <label class="campo">
+          <span class="rot-autor">Autor · Réplica</span>
+          <input type="file" id="file-autor" accept="application/pdf,.pdf">
+        </label>
+        <label class="campo">
+          <span class="rot-reu">Réu · Contestação</span>
+          <input type="file" id="file-reu" accept="application/pdf,.pdf">
+        </label>
+      </div>
+      <div id="fichas" class="fichas"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab">
+        <span class="num">02</span>
+        <h2>Inteligência & cofre</h2>
+      </div>
+      <div id="statusIA" class="status-ia verificando">
+        <span class="ponto"></span><span class="txt">Verificando o Omniroute…</span>
+      </div>
+      <div id="painelCofre" class="cofre">
+        <div class="em-uso">
+          <label class="campo">
+            <span>Modelo de raciocínio em uso pelo dashboard</span>
+            <select id="selModelo" aria-label="Modelo de raciocínio"></select>
+          </label>
+          <button id="btnUsarModelo" class="btn-sec" type="button" disabled>Usar este modelo</button>
+        </div>
+        <div id="melhores" class="melhores" aria-live="polite"></div>
+
+        <details id="dropConexao" class="drop">
+          <summary><span class="drop-t">Conexão · URL base e chave da API</span><span id="resumoConexao" class="drop-r"></span></summary>
+          <div class="drop-corpo">
+            <label class="campo">
+              <span>Chave da API (gravada no cofre seguro do Windows — nunca fica visível)</span>
+              <input type="password" id="inputChave" autocomplete="off" placeholder="deixe vazio para manter a chave gravada">
+            </label>
+            <label class="campo">
+              <span>URL base</span>
+              <input type="text" id="inputBase" placeholder="https://...">
+            </label>
+            <label class="campo">
+              <span>Testar também estes modelos (opcional, separados por vírgula)</span>
+              <input type="text" id="inputModelosExtra" placeholder="ex.: provedor/modelo-x, provedor/modelo-y">
+            </label>
+            <div class="cofre-acoes"><button id="btnTestarIA" class="btn-prio" type="button">Testar conexão</button></div>
+            <p class="nota" id="notaCofre"></p>
+          </div>
+        </details>
+
+        <details id="dropCatalogo" class="drop">
+          <summary><span class="drop-t">Catálogo de modelos por servidor</span><span id="resumoCatalogo" class="drop-r">abrir para carregar</span></summary>
+          <div class="drop-corpo">
+            <p class="nota">Marque os modelos que quer testar (de qualquer servidor) e clique em <b>Testar selecionados</b>. Os que responderem ficam verdes e podem ser usados pelo dashboard. O teste não troca o modelo em uso.</p>
+            <div class="cat-ferr">
+              <input type="search" id="filtroModelos" placeholder="Filtrar (ex.: claude, gpt-6, nvidia)" aria-label="Filtrar modelos">
+              <button id="btnTestarSel" class="btn-prio" type="button" disabled>Testar selecionados</button>
+              <button id="btnLimparSel" class="btn-mini" type="button">limpar seleção</button>
+              <button id="btnAtualizarCat" class="btn-mini" type="button">atualizar lista</button>
+            </div>
+            <div id="listaModelos" class="lista-servidores" aria-live="polite"></div>
+          </div>
+        </details>
+      </div>
+      <div class="skills-resumo">
+        <span class="rot">Skills jurídicas mapeadas</span>
+        <strong id="totalSkills">—</strong>
+        <span class="dica">núcleo do tribunal + sua biblioteca local</span>
+      </div>
+      <details id="dropSkills" class="drop">
+        <summary><span class="drop-t">Todas as skills mapeadas</span><span id="resumoSkillsSel" class="drop-r">abrir para ver e escolher</span></summary>
+        <div class="drop-corpo">
+          <p class="nota">Clique numa skill para ver o que ela faz. Com <b>Incluir na análise</b>, o conteúdo dela entra no roteiro do revisor e do juiz em todas as teses. Pode incluir quantas quiser; elas também aparecem marcadas no item 03.</p>
+          <div class="cat-ferr">
+            <input type="search" id="filtroSkills" placeholder="Buscar por nome ou descrição (ex.: prazo, sentença, risco)" aria-label="Buscar skill">
+            <select id="tipoSkills" aria-label="Filtrar skills">
+              <option value="juridica">Jurídicas</option>
+              <option value="todas">Todas</option>
+              <option value="nucleo">Núcleo do tribunal</option>
+              <option value="sel">Selecionadas</option>
+            </select>
+          </div>
+          <div id="skillsSelChips" class="sk-chips"></div>
+          <div class="sk-cat">
+            <div id="listaSkillsCat" class="sk-lista" role="listbox" aria-label="Skills mapeadas"></div>
+            <div id="detSkill" class="sk-det" aria-live="polite"><span class="nota">Selecione uma skill na lista para ver a explicação.</span></div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab">
+        <span class="num">03</span>
+        <h2>Parte atuante &amp; contexto</h2>
+      </div>
+      <p class="nota">Para quem o parecer é redigido? A análise inverte as probabilidades e prioriza as melhorias dessa parte.</p>
+      <div class="alternador" role="radiogroup" aria-label="Parte atuante">
+        <button class="alt opt" data-atuante="autor" role="radio" aria-checked="true">
+          <span class="alt-nome">AUTOR</span><span class="alt-desc">parte da Réplica</span>
+        </button>
+        <button class="alt" data-atuante="reu" role="radio" aria-checked="false">
+          <span class="alt-nome">RÉU</span><span class="alt-desc">parte da Contestação</span>
+        </button>
+      </div>
+      <label class="campo">
+        <span>Contexto do caso — escreva tudo o que achar pertinente</span>
+        <textarea id="contexto" rows="6" placeholder="Ex.: Ação anulatória de IPTU por homonímia, Juizado Especial da Fazenda Pública de SP. O Município já reconheceu o erro na via administrativa. Avisos de cobrança de 2025 e 2026 em anexo. Quero reforçar o dano moral e a revelia..."></textarea>
+      </label>
+
+      <div class="sub-cab">
+        <span>Skills de análise</span>
+        <button id="btnRecomendar" class="btn-link" type="button">recomendar pelo contexto</button>
+      </div>
+      <p class="nota">Marque as que o revisor e o juiz devem seguir. As recomendadas para o contexto já vêm marcadas.</p>
+      <div id="listaSkills" class="lista-skills"><span class="nota">Carregando…</span></div>
+
+      <div class="sub-cab"><span>Documentos anexos (provas)</span></div>
+      <p class="nota">Ex.: avisos de cobrança de 2025 e 2026, certidões, protocolos administrativos. Entram na análise como prova disponível.</p>
+      <div class="anexo-form">
+        <input type="text" id="anexoRotulo" placeholder="Descrição (ex.: Aviso de cobrança IPTU 2025)" aria-label="Descrição do anexo">
+        <input type="file" id="file-anexo" accept="application/pdf,.pdf" aria-label="Arquivo PDF do anexo">
+      </div>
+      <div id="listaAnexos" class="fichas"></div>
+
+      <div id="leituraBox" class="leitura-box" hidden>
+        <div class="lb-cab"><b>Leitura integral dos documentos</b><span id="lbStatus" class="nota"></span>
+          <button class="btn-mini" id="lbLer" type="button">Ler os documentos</button></div>
+        <p class="nota">Todas as páginas de todos os documentos são lidas antes da análise. O botão <b>Convocar sessão</b> só fica disponível quando a leitura terminar.</p>
+        <div id="lbDocs"></div>
+      </div>
+      <div class="acoes">
+        <button id="btnAnalisar" class="btn-prio" disabled title="Disponível depois da leitura integral de todos os documentos">Convocar sessão</button>
+        <button id="btnExportar" class="btn-sec" disabled>Exportar parecer</button>
+        <button id="btnImprimir" class="btn-sec" type="button" disabled>Imprimir / PDF (A4)</button>
+      </div>
+      <div id="progresso" class="progresso" hidden>
+        <div class="barra"><i id="barraFill"></i></div>
+        <span id="progressoTexto">Processando…</span>
+      </div>
+      <div id="areaJuridica" class="area-juridica" hidden></div>
+      <ol id="etapas" class="etapas" hidden>
+        <li data-etapa="leitura"><span class="s">aguardando</span><span class="t">Leitura integral de todas as páginas de todos os documentos</span></li>
+        <li data-etapa="magistrado"><span class="s">aguardando</span><span class="t">Perfil tático do magistrado (atos do juízo nos autos)</span></li>
+        <li data-etapa="topicos"><span class="s">aguardando</span><span class="t">Matriz de confronto ponto a ponto (peça de ataque × peça de resposta)</span></li>
+        <li data-etapa="leis"><span class="s">aguardando</span><span class="t">Conferência da legislação citada</span></li>
+        <li data-etapa="juris"><span class="s">aguardando</span><span class="t">Conferência da jurisprudência (CNJ · DataJud · IA)</span></li>
+        <li data-etapa="anexos"><span class="s">aguardando</span><span class="t">Análise dos documentos anexos</span></li>
+        <li data-etapa="decisao"><span class="s">aguardando</span><span class="t">Decisão do juiz</span></li>
+        <li data-etapa="advogado"><span class="s">aguardando</span><span class="t">Advogado sênior (20+ anos): plano cirúrgico de aperfeiçoamento e checklist pré-protocolo</span></li>
+        <li data-etapa="skills"><span class="s">aguardando</span><span class="t">Relatório das skills aplicadas</span></li>
+      </ol>
+      <ol id="trilha" class="trilha-topicos" hidden></ol>
+    </div>
+
+    <div id="bloco-sumario" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">S</span><h2>Sumário executivo</h2><span class="nota-cab">diretrizes V5.0 · Dual Engine</span></div>
+      <div id="res-sumario" class="resultado"></div>
+    </div>
+
+    <div id="bloco-magistrado" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">M</span><h2>Perfil tático do magistrado</h2><span class="nota-cab">somente os atos do juízo que constam dos autos</span></div>
+      <div id="res-magistrado" class="resultado"></div>
+    </div>
+
+    <div id="bloco-confronto" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">04</span><h2>Quadro de confronto</h2>
+        <button class="btn-mini" type="button" data-imprimir style="margin-left:auto">Imprimir / PDF (A4)</button></div>
+      <div id="resultado" class="resultado"></div>
+    </div>
+
+    <div id="bloco-leis" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">05</span><h2>Legislação citada</h2></div>
+      <div id="res-leis" class="resultado"></div>
+    </div>
+
+    <div id="bloco-juris" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">06</span><h2>Análise de jurisprudência</h2></div>
+      <div id="res-juris" class="resultado"></div>
+    </div>
+
+    <div id="bloco-auditoria" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">A</span><h2>Auditoria de jurisprudência e legislação</h2><span class="nota-cab">regras duras conferidas pelo sistema</span></div>
+      <div id="res-auditoria" class="resultado"></div>
+    </div>
+
+    <div id="bloco-folhas" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">F</span><h2>Auditoria cruzada fato-folha</h2><span class="nota-cab">cada "fls." da peça conferido no PDF do processo</span></div>
+      <div id="res-folhas" class="resultado"></div>
+    </div>
+
+    <div id="bloco-decisao" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">07</span><h2>Decisão</h2></div>
+      <div id="res-decisao" class="resultado"></div>
+    </div>
+
+    <div id="bloco-advogado" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">08</span><h2>Advogado sênior · plano cirúrgico de aperfeiçoamento</h2></div>
+      <div id="res-advogado" class="resultado"></div>
+    </div>
+
+    <div id="bloco-dosimetria" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">Q</span><h2>Matriz de dosimetria do dano moral</h2><span class="nota-cab">quantum pricing · faixa postulada × faixa provável</span></div>
+      <div id="res-dosimetria" class="resultado"></div>
+    </div>
+
+    <div id="bloco-checklist" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">C</span><h2>Checklist pré-protocolo</h2><span class="nota-cab">assinaturas · procuração · documentos · custas · tempestividade</span></div>
+      <div id="res-checklist" class="resultado"></div>
+    </div>
+
+    <div id="bloco-skills" class="bloco" hidden>
+      <div class="bloco-cab"><span class="num">09</span><h2>Skills aplicadas</h2></div>
+      <div id="res-skills" class="resultado"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><span class="num">··</span><h2>Sessões anteriores</h2></div>
+      <p class="nota">Cada análise é independente e decidida só com os documentos da própria sessão. Para começar sem histórico, zere as sessões.</p>
+      <div id="sessoes" class="sessoes"><span class="nota">—</span></div>
+      <div class="acoes"><button id="btnNovaSessao" class="btn-sec" type="button">Nova análise (limpar tela)</button>
+        <button id="btnZerar" class="btn-sec perigo" type="button">Zerar todas as sessões</button></div>
+    </div>
+  </section>
+</div>
+
+<section id="aba-estrategia" class="estrategia" role="tabpanel" hidden>
+  <div class="es-grade so-galeria">
+    <div class="es-col">
+      <div class="es-cab"><h2>Galeria de provas</h2><div class="es-totais" id="esTotais"></div></div>
+      <p class="nota">Provas dos autos (encontradas na leitura integral do processo, com a folha) e provas novas (anexos, como se fossem protocoladas com a réplica). Marque o que deve ser <b>considerado</b> na análise e o que já foi <b>conferido</b>. As novas provas entram na próxima análise e contam para o ganho.</p>
+      <div class="es-filtros" id="esFiltros">
+        <button type="button" class="on" data-filtro="todas">Todas</button><button type="button" data-filtro="consideradas">Consideradas</button>
+        <button type="button" data-filtro="fora">Fora da análise</button><button type="button" data-filtro="conferidas">Conferidas</button>
+        <button type="button" data-filtro="novas">Novas (anexos)</button>
+        <input type="search" id="esBusca" placeholder="Buscar prova" aria-label="Buscar prova">
+      </div>
+      <div class="es-galeria" id="esGaleria"></div>
+      <div class="es-cab sub"><h3>Provas que faltam</h3></div>
+      <p class="nota">O que a análise e o advogado sênior pedem e não aparece na galeria. Envie o PDF de cada uma: entra como prova nova.</p>
+      <div id="esFaltam" class="es-faltam"></div>
+      <div class="es-aviso" id="esAviso" hidden>As marcas ou as provas mudaram: convoque uma nova análise para medir o efeito.</div>
+      <button class="btn-prio" id="esNovaAnalise" type="button">Convocar nova análise com estas provas</button>
+    </div>
+  </div>
+</section>
+
+<section id="aba-peca" class="peca" role="tabpanel" hidden>
+  <div class="pc-barra" role="toolbar" aria-label="Ferramentas da peça">
+    <div class="pc-grupo">
+      <button class="pc-b txt" id="pcAbrir" type="button" title="Reabrir a peça da parte atuante a partir do PDF da sessão">Abrir da sessão</button>
+      <label class="pc-b txt" title="Enviar uma versão .docx da peça">Enviar DOCX<input type="file" id="pcDocx" accept=".docx" hidden></label>
+      <button class="pc-b txt" id="pcSalvarVersao" type="button" title="Guardar uma versão nomeada">Salvar versão</button>
+    </div>
+    <div class="pc-grupo">
+      <button class="pc-b" data-cmd="undo" type="button" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶</button>
+      <button class="pc-b" data-cmd="redo" type="button" title="Refazer (Ctrl+Y)" aria-label="Refazer">↷</button>
+    </div>
+    <div class="pc-grupo">
+      <button class="pc-b" data-cmd="bold" type="button" title="Negrito (Ctrl+B)" aria-label="Negrito"><b>N</b></button>
+      <button class="pc-b" data-cmd="italic" type="button" title="Itálico (Ctrl+I)" aria-label="Itálico"><i>I</i></button>
+      <button class="pc-b" data-cmd="underline" type="button" title="Sublinhado (Ctrl+U)" aria-label="Sublinhado"><u>S</u></button>
+      <button class="pc-b" data-cmd="vermelho" type="button" title="Texto em vermelho (marcar alteração)" aria-label="Texto em vermelho"><span class="cor-v">A</span></button>
+      <button class="pc-b" data-cmd="removeFormat" type="button" title="Limpar formatação" aria-label="Limpar formatação">⨯</button>
+    </div>
+    <div class="pc-grupo">
+      <button class="pc-b txt" data-bloco="" type="button" title="Parágrafo comum">¶</button>
+      <button class="pc-b txt" data-bloco="recuo" type="button" title="Parágrafo com recuo de 2 cm na 1ª linha">Recuo</button>
+      <button class="pc-b txt" data-bloco="citacao" type="button" title="Citação longa: recuo de 4 cm, fonte 10, espaço simples">Citação</button>
+      <button class="pc-b txt" data-bloco="titulo" type="button" title="Título de tópico (negrito, entra no sumário)">Título</button>
+    </div>
+    <div class="pc-grupo">
+      <button class="pc-b" data-cmd="justifyLeft" type="button" title="Alinhar à esquerda" aria-label="Alinhar à esquerda"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 9h9M3 13h14M3 17h9"/></svg></button>
+      <button class="pc-b" data-cmd="justifyCenter" type="button" title="Centralizar" aria-label="Centralizar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M6 9h8M3 13h14M6 17h8"/></svg></button>
+      <button class="pc-b" data-cmd="justifyFull" type="button" title="Justificar" aria-label="Justificar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 9h14M3 13h14M3 17h14"/></svg></button>
+      <button class="pc-b" data-cmd="justifyRight" type="button" title="Alinhar à direita" aria-label="Alinhar à direita"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M8 9h9M3 13h14M8 17h9"/></svg></button>
+      <button class="pc-b txt" id="pcQuebra" type="button" title="Inserir quebra de página">Quebra</button>
+    </div>
+    <div class="pc-grupo">
+      <input type="search" id="pcBusca" placeholder="Localizar" aria-label="Localizar no documento">
+      <input type="text" id="pcTroca" placeholder="Substituir por" aria-label="Substituir por">
+      <button class="pc-b txt" id="pcTrocar" type="button" title="Substituir todas as ocorrências">Substituir</button>
+    </div>
+    <div class="pc-grupo">
+      <select id="pcZoom" aria-label="Zoom"><option value="fit" selected>Ajustar</option><option value="0.7">70%</option><option value="0.85">85%</option><option value="1">100%</option><option value="1.15">115%</option></select>
+    </div>
+    <div class="pc-grupo direita">
+      <button class="pc-b txt" id="pcExpDocx" type="button" title="Baixar no papel timbrado, editável no Word">Exportar DOCX</button>
+      <button class="pc-b txt" id="pcExpPdf" type="button" title="Baixar PDF paginado pelo Word, pronto para protocolo">Exportar PDF</button>
+      <button class="btn-prio pc-nova" id="pcNovaAnalise" type="button" title="Confronta a peça editada com a contestação de novo">Nova análise</button>
+    </div>
+  </div>
+  <div class="pc-status" aria-live="polite"><span id="pcOrigem">Nenhuma peça aberta</span><span id="pcSalvo"></span><span id="pcContagem"></span></div>
+  <div class="pc-sug" id="pcSug" hidden>
+    <div class="sug-cab"><span class="sug-leg"><i></i>Trecho em verde = alteração sugerida pelo advogado sênior</span>
+      <button class="pc-b txt" id="pcSugLimpar" type="button" title="Remove a cor verde para a versão final; a versão marcada fica guardada">Tirar o verde (versão final)</button>
+      <button class="pc-b prio" id="pcSugAplicar" type="button" title="Aplica o plano cirúrgico em definitivo (tira os riscados e o verde) e baixa o .docx no papel timbrado, pronto para assinar e protocolar">Aplicar melhorias na peça (.docx)</button></div>
+    <p id="pcSugResumo" class="nota"></p>
+    <div id="pcSugLista" class="sug-lista"></div>
+  </div>
+
+  <div class="pc-grade">
+    <aside class="pc-sumario" aria-label="Sumário da peça">
+      <div class="pc-cab">Sumário</div>
+      <nav id="pcSumario"><span class="nota">Os títulos da peça aparecem aqui.</span></nav>
+    </aside>
+
+    <div class="pc-mesa" id="pcMesa">
+      <div class="pc-vazio" id="pcVazio">
+        <h3 id="pcVazioT">Peça Processual</h3>
+        <p>Envie as peças no item 01 da Análise. A peça da parte atuante (a réplica, se você atua pelo autor) abre aqui no papel timbrado do escritório, pronta para edição. Se o PDF não ficar bom, envie a versão em DOCX.</p>
+        <p class="nota">Depois de convocar a sessão, as melhorias da análise ficam ao lado para aplicar com um clique, o placar acompanha as alterações e o botão <b>Nova análise</b> reavalia a peça contra a contestação.</p>
+      </div>
+      <div class="pc-zoom" id="pcZoomBox" hidden>
+        <div class="pc-folhas" id="pcFolhas" aria-hidden="true"></div>
+        <div class="pc-editor" id="pcEditor" contenteditable="true" spellcheck="true" lang="pt-BR" role="textbox" aria-multiline="true" aria-label="Texto da peça"></div>
+      </div>
+    </div>
+
+    <aside class="pc-lateral" aria-label="Painel da peça">
+      <div class="pc-tabs" role="tablist">
+        <button class="pc-tab on" data-pctab="placar" role="tab" aria-selected="true">Placar</button>
+        <button class="pc-tab" data-pctab="ia" role="tab" aria-selected="false">Assistente IA</button>
+        <button class="pc-tab" data-pctab="melhorias" role="tab" aria-selected="false">Melhorias</button>
+        <button class="pc-tab" data-pctab="versoes" role="tab" aria-selected="false">Versões</button>
+        <button class="pc-tab so-sug" data-pctab="chat" role="tab" aria-selected="false">Chat estratégico</button>
+      </div>
+
+      <div class="pc-painel" data-pcpainel="placar">
+        <div class="pv-cab">Chance de êxito ao vivo</div>
+        <div class="pv-placar">
+          <div class="autor"><span class="r">Autor</span><span class="n" id="pvAutor">—</span></div>
+          <div class="reu"><span class="r">Réu</span><span class="n" id="pvReu">—</span></div>
+        </div>
+        <div class="pv-split"><i class="a" id="pvBarA" style="width:50%"></i><i class="r" id="pvBarR" style="width:50%"></i></div>
+        <p class="pv-delta" id="pvDelta">Convoque a sessão para ter a base de comparação.</p>
+        <div class="pv-acoes">
+          <button class="btn-sec" id="pvReavaliar" type="button" disabled>Reavaliar com IA agora</button>
+          <label class="pv-auto"><input type="checkbox" id="pvAuto" checked> reavaliar sozinho após 40 s sem digitar</label>
+        </div>
+        <div id="pvTopicos" class="pv-topicos"></div>
+        <p class="nota">Ao digitar, o placar estima na hora quais critérios do roteiro passaram a ser atendidos, pelos termos esperados em cada um. A reavaliação com IA confirma pelo mesmo roteiro, e a <b>Nova análise</b> refaz o confronto completo.</p>
+      </div>
+
+      <div class="pc-painel" data-pcpainel="ia" hidden>
+        <div id="iaLog" class="ia-log" aria-live="polite">
+          <div class="ia-msg sis">Peça o que quiser: “fortaleça o tópico da revelia com o art. 344 do CPC”, “aplique as melhorias de prioridade alta”, “revise concordância e pontuação”, “reescreva o trecho selecionado de forma mais objetiva”. As alterações aparecem marcadas no documento e podem ser desfeitas.</div>
+        </div>
+        <div class="ia-chips">
+          <button class="chip-ia" type="button" data-ia="Aplique na peça, nos locais adequados, todas as melhorias de prioridade ALTA da análise, sem remover argumentos existentes.">Aplicar prioridade alta</button>
+          <button class="chip-ia" type="button" data-ia="Revise ortografia, concordância, pontuação e repetições em toda a peça, sem mudar o conteúdo jurídico.">Revisar português</button>
+          <button class="chip-ia" type="button" data-ia="Reescreva o trecho selecionado de forma mais clara, objetiva e persuasiva, mantendo os fundamentos.">Melhorar seleção</button>
+          <button class="chip-ia" type="button" data-ia="Revise os pedidos finais para que cada ponto rebatido gere o pedido correspondente, de forma numerada.">Revisar pedidos</button>
+          <button class="chip-ia" type="button" data-ia="Quais são os 3 pontos mais fracos que ainda restam na peça e o que fazer em cada um? Não altere o documento.">Pontos fracos?</button>
+        </div>
+        <div class="ia-sel" id="iaSel">Sem trecho selecionado: a instrução vale para a peça inteira.</div>
+        <textarea id="iaTexto" rows="3" placeholder="Escreva o que a IA deve fazer na peça… (Ctrl+Enter envia)" aria-label="Instrução para a IA"></textarea>
+        <div class="ia-acoes">
+          <label class="pv-auto"><input type="checkbox" id="iaUsarAnalise" checked> usar a análise como referência</label>
+          <button class="btn-prio" id="iaEnviar" type="button">Enviar</button>
+        </div>
+      </div>
+
+      <div class="pc-painel" data-pcpainel="melhorias" hidden>
+        <p class="nota">Tudo o que a análise apontou, por tópico, em ordem de pontos. <b>Aplicar com IA</b> insere no lugar certo; <b>no cursor</b> cola o texto sugerido onde está o cursor.</p>
+        <div id="pcMelhorias"><span class="nota">Convoque a sessão para listar as melhorias.</span></div>
+      </div>
+
+      <div class="pc-painel" data-pcpainel="versoes" hidden>
+        <p class="nota">A peça é salva sozinha a cada alteração. Use <b>Salvar versão</b> para guardar marcos. A IA guarda uma versão antes de cada alteração que faz.</p>
+        <div id="pcComparativo"></div>
+        <div id="pcVersoes" class="pc-versoes"></div>
+      </div>
+      <div class="pc-painel pc-chat" data-pcpainel="chat" hidden>
+        <div class="pv-cab">Copiloto forense <span class="nota">V5.0 · colega de bancada sênior · memória de todos os documentos</span>
+          <button class="btn-mini" id="esLimpar" type="button">limpar</button></div>
+        <div class="es-chips">
+          <button type="button" class="es-chip adv" data-p="/adversario" title="O motor assume a parte contrária e tenta destruir a peça recém-redigida (aba III); cada golpe vem com a blindagem">/adversario</button>
+          <button type="button" class="es-chip" data-p="Explique os fundamentos do percentual de risco de cada tese, pela conta do roteiro, e o que move cada número.">Explicar o percentual</button>
+          <button type="button" class="es-chip" data-p="Estruture memoriais em tópicos concisos e os pontos de sustentação oral, com as folhas das provas do processo.">Memoriais / sustentação oral</button>
+          <button type="button" class="es-chip" data-p="Reescreva o parágrafo sugerido da tese 1 em versão mais curta (no máximo 6 linhas), mantendo a folha das provas.">Reescrever mais curto</button>
+          <button type="button" class="es-chip" data-p="Como um juiz decidiria hoje cada tese e o que mudaria a decisão a favor do autor?">Como o juiz decidiria hoje?</button>
+          <button type="button" class="es-chip" data-p="Em qual tese está o maior ganho possível e o que eu acrescento na peça para chegar lá? Simule.">Maior ganho</button>
+          <button type="button" class="es-chip" data-p="Na tese 1 (revelia), com as datas de intimação, decurso de prazo e juntada da contestação, como reforçar a revelia e neutralizar a tese do réu? Escreva o parágrafo e simule.">Revelia (tese 1)</button>
+          <button type="button" class="es-chip" data-p="Quais provas da galeria ainda não estão citadas na peça e onde citar cada uma? Simule o ganho.">Provas não usadas</button>
+          <button type="button" class="es-chip" data-p="Quais pedidos devo incluir ou ajustar para maximizar a condenação?">Pedidos</button>
+        </div>
+        <div class="es-log" id="esLog" aria-live="polite"></div>
+        <div class="es-envio">
+          <textarea id="esTexto" rows="3" placeholder="Pergunte ou proponha uma melhoria (Ctrl+Enter envia). /adversario simula o ataque da parte contrária à peça. O texto pronto entra em verde no tópico da tese."></textarea>
+          <button class="btn-prio" id="esEnviar" type="button">Enviar</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<footer>Ferramenta interna de apoio à análise jurídica. O parecer exige revisão do advogado responsável.</footer>
+<script src="/static/relatorio.js"></script>
+<script src="/static/app.js"></script>
+<script src="/static/peca.js"></script>
+<script src="/static/estrategia.js"></script>
+</body>
+</html>

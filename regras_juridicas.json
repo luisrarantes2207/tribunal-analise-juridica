@@ -1,0 +1,48 @@
+{
+  "versao": "R3-2026.10.24",
+  "observacao": "Regras fixas consultadas pelo codigo em toda analise (alinhadas as diretrizes V4.0 de diretrizes_juridicas_v4.md). Mudou alguma regra: suba a versao (o cache antigo deixa de valer). Revisao do advogado responsavel.",
+  "regras": [
+    {
+      "id": "correcao_fazenda",
+      "tema": "Correção monetária e juros em condenação da Fazenda Pública",
+      "regra": "Incide uma única vez a taxa SELIC, que engloba atualização monetária, remuneração do capital e compensação da mora (EC 113/2021, art. 3º). Não usar IPCA-E nem juros separados.",
+      "fonte": "Emenda Constitucional 113/2021, art. 3º"
+    },
+    {
+      "id": "honorarios_jefp",
+      "tema": "Honorários advocatícios no Juizado Especial da Fazenda Pública",
+      "regra": "Em primeiro grau não há condenação em custas nem honorários; somente o recorrente vencido paga honorários (art. 55 da Lei 9.099/95, aplicado pelo art. 27 da Lei 12.153/09).",
+      "fonte": "Lei 9.099/95, art. 55; Lei 12.153/09, art. 27"
+    },
+    {
+      "id": "revelia_fazenda",
+      "tema": "Efeitos da revelia contra a Fazenda Pública",
+      "regra": "Decorrido o prazo sem contestação (certidão de decurso), a revelia da Fazenda deve ser reconhecida e a contestação juntada depois é intempestiva; no Juizado Especial da Fazenda Pública não há prazo diferenciado (art. 7º da Lei 12.153/09). O art. 345, II, do CPC afasta APENAS o efeito material (a presunção ficta de veracidade), pela indisponibilidade do interesse público: nunca afirmar presunção automática pelo silêncio ou pelo art. 344. A vitória do autor vem de dois pilares: (1) preclusão temporal/consumativa: a Fazenda revel recebe o processo no estado em que se encontra (art. 346, parágrafo único, do CPC) e perde as defesas extemporâneas; (2) prova pré-constituída e confissão: o autor cumpriu o ônus documental (art. 373, I) e os expedientes internos do ente admitiram o erro (arts. 374, II e III, 389 e 390 do CPC). Confira sempre as datas de intimação, prazo e juntada nos autos.",
+      "fonte": "CPC, arts. 344, 345, II, 346, parágrafo único, 373, I, 374, II e III, 389 e 390; Lei 12.153/09, art. 7º"
+    },
+    {
+      "id": "prazo_fazenda_jefp",
+      "tema": "Prazos da Fazenda Pública no Juizado Especial da Fazenda Pública",
+      "regra": "Não há prazo diferenciado para a Fazenda Pública, inclusive para recurso (art. 7º da Lei 12.153/09).",
+      "fonte": "Lei 12.153/09, art. 7º"
+    },
+    {
+      "id": "juizado_prova_documental",
+      "tema": "Prova e julgamento no Juizado Especial (Cível e da Fazenda Pública)",
+      "regra": "Não sugerir prova pericial complexa nem audiência desnecessária: a complexidade probatória afasta a competência do Juizado e leva à extinção sem resolução de mérito (art. 51, II, da Lei 9.099/95). Defender o julgamento antecipado do mérito (art. 355, I, do CPC) pela suficiência da prova documental.",
+      "fonte": "Lei 9.099/95, art. 51, II; CPC, art. 355, I"
+    },
+    {
+      "id": "dano_moral_negativacao",
+      "tema": "Dano moral por cobrança indevida com negativação (CADIN, Serasa, SPC, protesto de CDA)",
+      "regra": "O dano moral é presumido (in re ipsa), conforme jurisprudência pacífica do STJ. Não sugerir perícia, testemunhas ou atestados de sofrimento psíquico. Prova documental: a restrição indevida (ativa ou pretérita), o nome limpo prévio (contra a Súmula 385/STJ) e a desídia do ente após avisos administrativos (desvio produtivo).",
+      "fonte": "Jurisprudência pacífica do STJ; Súmula 385/STJ"
+    },
+    {
+      "id": "precedentes_sem_invencao",
+      "tema": "Citação de precedentes",
+      "regra": "Nunca citar número de acórdão ou recurso sem certeza absoluta; sem confirmação, usar súmula consolidada ou a tese de forma abstrata. A falta de ementas não diminui a nota da peça: prova dos autos e fundamento normativo pesam mais.",
+      "fonte": "Diretrizes V4.0, Regra 4"
+    }
+  ]
+}
